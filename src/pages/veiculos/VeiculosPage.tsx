@@ -8,12 +8,10 @@ export function VeiculosPage() {
     <>
       <PageHeader
         title="Veículos"
-        description="Veículos dos clientes, com matrícula, marca, modelo e histórico de serviços."
       />
       <EmptyState
         icon="car"
         title="Ainda não existem veículos"
-        description="Os veículos são criados automaticamente ao importar os dados dos clientes."
       />
     </>
   )

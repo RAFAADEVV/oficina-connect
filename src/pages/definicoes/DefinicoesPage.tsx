@@ -10,7 +10,6 @@ export function DefinicoesPage() {
     <>
       <PageHeader
         title="Definições"
-        description="Dados da oficina, utilizadores e preferências da conta."
       />
 
       <div className="grid gap-6 lg:grid-cols-2">

@@ -4,7 +4,7 @@ import { Icon, type IconName } from './Icon'
 interface EmptyStateProps {
   icon: IconName
   title: string
-  description: string
+  description?: string
   action?: ReactNode
 }
 
@@ -16,7 +16,7 @@ export function EmptyState({ icon, title, description, action }: EmptyStateProps
         <Icon name={icon} className="size-6" />
       </span>
       <h2 className="mt-4 text-base font-semibold text-slate-900">{title}</h2>
-      <p className="mt-1 max-w-md text-sm text-slate-500">{description}</p>
+      {description && <p className="mt-1 max-w-md text-sm text-slate-500">{description}</p>}
       {action && <div className="mt-6">{action}</div>}
     </div>
   )

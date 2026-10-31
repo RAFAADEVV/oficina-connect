@@ -1,6 +1,7 @@
 import type { ButtonHTMLAttributes } from 'react'
 import { cn } from '../../lib/cn'
 import { Icon, type IconName } from './Icon'
+import { Spinner } from './Spinner'
 
 type ButtonVariant = 'primary' | 'secondary' | 'ghost'
 type ButtonSize = 'sm' | 'md'
@@ -9,6 +10,8 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant
   size?: ButtonSize
   icon?: IconName
+  /** Mostra um indicador de carregamento e desativa o botão */
+  isLoading?: boolean
 }
 
 const variantClasses: Record<ButtonVariant, string> = {
@@ -27,14 +30,18 @@ export function Button({
   variant = 'primary',
   size = 'md',
   icon,
+  isLoading = false,
   type = 'button',
   className,
+  disabled,
   children,
   ...props
 }: ButtonProps) {
   return (
     <button
       type={type}
+      disabled={disabled || isLoading}
+      aria-busy={isLoading || undefined}
       className={cn(
         'inline-flex items-center justify-center rounded-lg font-medium transition-colors disabled:cursor-not-allowed',
         variantClasses[variant],
@@ -43,7 +50,7 @@ export function Button({
       )}
       {...props}
     >
-      {icon && <Icon name={icon} className="size-4" />}
+      {isLoading ? <Spinner className="size-4" /> : icon && <Icon name={icon} className="size-4" />}
       {children}
     </button>
   )

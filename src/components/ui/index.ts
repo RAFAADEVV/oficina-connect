@@ -1,8 +1,11 @@
 // Ponto único de importação dos componentes de interface.
 // Exemplo: import { Button, Card } from '../../components/ui'
+export { Alert } from './Alert'
 export { Button } from './Button'
 export { Card } from './Card'
 export { EmptyState } from './EmptyState'
 export { Icon, type IconName } from './Icon'
 export { PageHeader } from './PageHeader'
+export { FullPageLoader, Spinner } from './Spinner'
 export { StatCard } from './StatCard'
+export { TextField } from './TextField'

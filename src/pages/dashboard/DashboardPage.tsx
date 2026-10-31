@@ -8,7 +8,6 @@ export function DashboardPage() {
     <>
       <PageHeader
         title="Dashboard"
-        description="Visão geral dos clientes, oportunidades de contacto e resultados da oficina."
       />
 
       {/* Os valores ficam a "—" até existirem dados reais importados. */}
