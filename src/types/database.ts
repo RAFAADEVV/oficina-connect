@@ -8,6 +8,8 @@
 
 export type OrganizationRole = 'owner' | 'member'
 
+export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[]
+
 export type Database = {
   __InternalSupabase: {
     PostgrestVersion: '13'
@@ -52,12 +54,140 @@ export type Database = {
         Update: never
         Relationships: []
       }
+      customers: {
+        Row: {
+          id: string
+          organization_id: string
+          full_name: string
+          phone: string
+          email: string | null
+          nif: string | null
+          address: string | null
+          notes: string | null
+          contact_opt_out: boolean
+          contact_opt_out_at: string | null
+          created_by: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          organization_id: string
+          full_name: string
+          phone: string
+          email?: string | null
+          nif?: string | null
+          address?: string | null
+          notes?: string | null
+          contact_opt_out?: boolean
+        }
+        Update: {
+          full_name?: string
+          phone?: string
+          email?: string | null
+          nif?: string | null
+          address?: string | null
+          notes?: string | null
+          contact_opt_out?: boolean
+        }
+        Relationships: []
+      }
+      vehicles: {
+        Row: {
+          id: string
+          organization_id: string
+          customer_id: string | null
+          plate: string
+          make: string | null
+          model: string | null
+          year: number | null
+          mileage: number | null
+          notes: string | null
+          created_by: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          organization_id: string
+          customer_id?: string | null
+          plate: string
+          make?: string | null
+          model?: string | null
+          year?: number | null
+          mileage?: number | null
+          notes?: string | null
+        }
+        Update: {
+          customer_id?: string | null
+          plate?: string
+          make?: string | null
+          model?: string | null
+          year?: number | null
+          mileage?: number | null
+          notes?: string | null
+        }
+        Relationships: []
+      }
+      service_records: {
+        Row: {
+          id: string
+          organization_id: string
+          vehicle_id: string
+          service_date: string
+          description: string
+          mileage: number | null
+          created_by: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          organization_id: string
+          vehicle_id: string
+          service_date: string
+          description: string
+          mileage?: number | null
+        }
+        Update: {
+          service_date?: string
+          description?: string
+          mileage?: number | null
+        }
+        Relationships: []
+      }
+      imports: {
+        Row: {
+          id: string
+          organization_id: string
+          file_name: string
+          rows_total: number
+          rows_skipped: number
+          customers_created: number
+          vehicles_created: number
+          services_created: number
+          created_by: string | null
+          created_at: string
+        }
+        Insert: {
+          organization_id: string
+          file_name: string
+          rows_total?: number
+          rows_skipped?: number
+          customers_created?: number
+          vehicles_created?: number
+          services_created?: number
+        }
+        Update: never
+        Relationships: []
+      }
     }
     Views: Record<never, never>
     Functions: {
       create_organization: {
         Args: { p_name: string }
         Returns: string
+      }
+      import_records: {
+        Args: { p_organization_id: string; p_rows: Json }
+        Returns: Json
       }
     }
     Enums: {

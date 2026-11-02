@@ -22,10 +22,25 @@ const messages: Record<string, string> = {
   signup_disabled: 'O registo de novas contas está desativado.',
   session_not_found: 'A sua sessão expirou. Entre novamente.',
   otp_expired: 'O link expirou ou já foi usado. Peça um novo.',
+  // Erros da base de dados (códigos PostgreSQL)
+  '42501': 'Não tem permissão para fazer esta ação.',
+  '23514': 'Alguns dados não são válidos. Verifique os campos e tente novamente.',
+  '23503': 'O registo relacionado já não existe. Atualize a página e tente novamente.',
+  PGRST116: 'O registo não foi encontrado ou já não existe.',
+}
+
+/** Mensagens para valores repetidos, conforme a regra de unicidade que falhou. */
+const uniqueMessages: Record<string, string> = {
+  vehicles_organization_id_plate_key: 'Já existe um veículo com esta matrícula.',
 }
 
 export function getErrorMessage(error: unknown): string {
   const err = (error ?? {}) as ErrorLike
+
+  if (err.code === '23505') {
+    const constraint = Object.keys(uniqueMessages).find((name) => err.message?.includes(name))
+    return constraint ? uniqueMessages[constraint] : 'Este registo já existe.'
+  }
 
   if (err.code && messages[err.code]) {
     return messages[err.code]

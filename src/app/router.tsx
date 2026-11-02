@@ -5,7 +5,10 @@ import { CriarOficinaPage } from '../pages/auth/CriarOficinaPage'
 import { EntrarPage } from '../pages/auth/EntrarPage'
 import { NovaPasswordPage } from '../pages/auth/NovaPasswordPage'
 import { RecuperarPasswordPage } from '../pages/auth/RecuperarPasswordPage'
+import { ClienteDetalhePage } from '../pages/clientes/ClienteDetalhePage'
+import { ClienteFormPage } from '../pages/clientes/ClienteFormPage'
 import { ClientesPage } from '../pages/clientes/ClientesPage'
+import { ImportarPage } from '../pages/clientes/ImportarPage'
 import { DashboardPage } from '../pages/dashboard/DashboardPage'
 import { DefinicoesPage } from '../pages/definicoes/DefinicoesPage'
 import { NaoEncontradaPage } from '../pages/nao-encontrada/NaoEncontradaPage'
@@ -49,6 +52,10 @@ export const router = createBrowserRouter([
                 children: [
                   { index: true, element: <DashboardPage /> },
                   { path: 'clientes', element: <ClientesPage /> },
+                  { path: 'clientes/novo', element: <ClienteFormPage /> },
+                  { path: 'clientes/importar', element: <ImportarPage /> },
+                  { path: 'clientes/:id', element: <ClienteDetalhePage /> },
+                  { path: 'clientes/:id/editar', element: <ClienteFormPage /> },
                   { path: 'veiculos', element: <VeiculosPage /> },
                   { path: 'oportunidades', element: <OportunidadesPage /> },
                   { path: 'definicoes', element: <DefinicoesPage /> },
