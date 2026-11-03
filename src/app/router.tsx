@@ -13,6 +13,7 @@ import { DashboardPage } from '../pages/dashboard/DashboardPage'
 import { DefinicoesPage } from '../pages/definicoes/DefinicoesPage'
 import { NaoEncontradaPage } from '../pages/nao-encontrada/NaoEncontradaPage'
 import { OportunidadesPage } from '../pages/oportunidades/OportunidadesPage'
+import { RelatorioServicoPage } from '../pages/relatorio/RelatorioServicoPage'
 import { VeiculosPage } from '../pages/veiculos/VeiculosPage'
 import { ErrorPage } from './ErrorPage'
 import { GuestOnly, RequireAuth, RequireOrganization } from './guards'
@@ -46,6 +47,8 @@ export const router = createBrowserRouter([
           {
             element: <RequireOrganization />,
             children: [
+              // Relatório para imprimir: sem menu lateral
+              { path: 'relatorio/servico/:id', element: <RelatorioServicoPage /> },
               {
                 path: '/',
                 element: <AppLayout />,

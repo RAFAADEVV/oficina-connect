@@ -31,3 +31,17 @@
     @apply outline-2 outline-offset-2 outline-brand-600;
   }
 }
+
+/* Impressão (relatório de serviço): folha A4 com margens */
+@media print {
+  @page {
+    size: A4;
+    margin: 14mm;
+  }
+
+  body {
+    background: white;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}

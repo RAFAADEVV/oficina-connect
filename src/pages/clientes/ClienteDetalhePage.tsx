@@ -236,7 +236,7 @@ export function ClienteDetalhePage() {
                   )}
                   </div>
                   {isServicesOpen(vehicle.id) && (
-                    <VehicleServices organizationId={organization.id} vehicleId={vehicle.id} canDelete={isOwner} />
+                    <VehicleServices vehicleId={vehicle.id} canDelete={isOwner} />
                   )}
                 </li>
               ),

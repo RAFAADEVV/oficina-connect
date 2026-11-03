@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { Alert, Button, ConfirmDialog, Spinner } from '../../components/ui'
+import { Link } from 'react-router'
+import { Alert, Button, ConfirmDialog, Icon, Spinner } from '../../components/ui'
 import { formatDate, formatNumber } from '../../lib/format'
 import { useAsyncData } from '../../lib/useAsyncData'
 import { getErrorMessage } from '../auth/authErrors'
@@ -7,13 +8,12 @@ import { ServiceForm } from './ServiceForm'
 import { createService, deleteService, listVehicleServices, REVISION_TYPES, serviceTypeLabel, type ServiceRecord } from './servicesApi'
 
 interface VehicleServicesProps {
-  organizationId: string
   vehicleId: string
   canDelete: boolean
 }
 
 /** Histórico de serviços de um veículo e registo de novos serviços. */
-export function VehicleServices({ organizationId, vehicleId, canDelete }: VehicleServicesProps) {
+export function VehicleServices({ vehicleId, canDelete }: VehicleServicesProps) {
   const services = useAsyncData(`servicos:${vehicleId}`, () => listVehicleServices(vehicleId))
   const [isAdding, setIsAdding] = useState(false)
   const [toDelete, setToDelete] = useState<ServiceRecord | null>(null)
@@ -62,8 +62,8 @@ export function VehicleServices({ organizationId, vehicleId, canDelete }: Vehicl
         <div className="mb-4 rounded-lg border border-slate-200 bg-white p-4">
           <ServiceForm
             onCancel={() => setIsAdding(false)}
-            onSubmit={async (input) => {
-              await createService(organizationId, vehicleId, input)
+            onSubmit={async (input, parts) => {
+              await createService(vehicleId, input, parts)
               setIsAdding(false)
               services.reload()
             }}
@@ -93,6 +93,16 @@ export function VehicleServices({ organizationId, vehicleId, canDelete }: Vehicl
                 </p>
                 {service.mileage !== null && <p className="text-xs text-slate-500">{formatNumber(service.mileage)} km</p>}
               </div>
+              <Link
+                to={`/relatorio/servico/${service.id}`}
+                target="_blank"
+                rel="noopener"
+                className="inline-flex h-8 shrink-0 items-center gap-1.5 rounded-lg px-2.5 text-sm text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+                aria-label={`Relatório do serviço de ${formatDate(service.service_date)}`}
+              >
+                <Icon name="file" className="size-4" />
+                <span className="hidden sm:inline">Relatório</span>
+              </Link>
               {canDelete && (
                 <Button size="sm" variant="ghost" icon="trash" onClick={() => setToDelete(service)} aria-label="Apagar serviço" />
               )}

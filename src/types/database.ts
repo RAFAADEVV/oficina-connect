@@ -7,7 +7,7 @@
  */
 
 export type OrganizationRole = 'owner' | 'member'
-export type ServiceType = 'revisao' | 'oleo' | 'pneus' | 'travoes' | 'outro'
+export type ServiceType = 'revisao' | 'oleo' | 'pneus' | 'travoes' | 'reparacao' | 'outro'
 export type ReminderStage = 'mes' | 'semana' | 'atrasado'
 export type ContactOutcome = 'enviado' | 'agendado' | 'sem_resposta' | 'ja_fez' | 'nao_quer'
 export type DueSource = 'combinado' | 'combinado_km' | 'habito' | 'padrao'
@@ -25,6 +25,10 @@ export type Database = {
           id: string
           name: string
           service_interval_months: number
+          address: string | null
+          phone: string | null
+          email: string | null
+          nif: string | null
           created_by: string | null
           created_at: string
           updated_at: string
@@ -33,6 +37,10 @@ export type Database = {
         Update: {
           name?: string
           service_interval_months?: number
+          address?: string | null
+          phone?: string | null
+          email?: string | null
+          nif?: string | null
         }
         Relationships: []
       }
@@ -144,6 +152,10 @@ export type Database = {
           service_type: ServiceType
           next_service_date: string | null
           next_service_mileage: number | null
+          problem: string | null
+          work_done: string | null
+          checklist: string[]
+          recommendations: string | null
           created_by: string | null
           created_at: string
           updated_at: string
@@ -166,6 +178,21 @@ export type Database = {
           next_service_date?: string | null
           next_service_mileage?: number | null
         }
+        Relationships: []
+      }
+      service_parts: {
+        Row: {
+          id: string
+          organization_id: string
+          service_record_id: string
+          position: number
+          description: string
+          reference: string | null
+          quantity: number
+          created_at: string
+        }
+        Insert: never
+        Update: never
         Relationships: []
       }
       contact_logs: {
@@ -229,6 +256,10 @@ export type Database = {
     Functions: {
       create_organization: {
         Args: { p_name: string }
+        Returns: string
+      }
+      create_service_record: {
+        Args: { p_vehicle_id: string; p_service: Json; p_parts?: Json }
         Returns: string
       }
       get_service_reminders: {
