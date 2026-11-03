@@ -21,7 +21,7 @@ Plataforma web de acompanhamento de clientes para oficinas automóveis: importar
 
 ## Requisitos
 
-- **Node.js 20.19 ou superior** (recomendado: versão LTS mais recente) — https://nodejs.org
+- **Node.js 22.12 ou superior** (ou 20.19+ na linha 20; recomendado: versão LTS mais recente) — https://nodejs.org
 - **npm** (instalado com o Node.js)
 - **Git** — https://git-scm.com
 
@@ -69,9 +69,10 @@ As alterações ao código aparecem automaticamente. Para parar, carregue `Ctrl 
 | `npm run dev` | Arranca a aplicação em modo de desenvolvimento |
 | `npm run typecheck` | Verifica erros de TypeScript |
 | `npm run lint` | Verifica problemas de qualidade de código (oxlint) |
+| `npm test` | Corre os testes automáticos (vitest) |
 | `npm run build` | Gera a versão de produção na pasta `dist/` |
 | `npm run preview` | Abre localmente a versão de produção gerada |
-| `npm run check` | Faz tudo de uma vez: TypeScript + lint + build. **Executar antes de cada commit.** |
+| `npm run check` | Faz tudo de uma vez: TypeScript + lint + testes + build. **Executar antes de cada commit.** |
 
 ---
 

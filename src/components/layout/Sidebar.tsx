@@ -1,16 +1,30 @@
-import { NavLink } from 'react-router'
+import { useEffect, useState } from 'react'
+import { NavLink, useLocation } from 'react-router'
 import { mainNavigation, secondaryNavigation, type NavItem } from '../../config/navigation'
 import { useAuth } from '../../features/auth/useAuth'
 import { roleLabel, useOrganization } from '../../features/organization/useOrganization'
+import { isContacted, listReminders, onRemindersChanged } from '../../features/reminders/remindersApi'
 import { cn } from '../../lib/cn'
+import { useAsyncData } from '../../lib/useAsyncData'
 import { Icon } from '../ui/Icon'
+
+/** Número de clientes por contactar. Atualiza sempre que se muda de página. */
+function usePendingReminderCount(organizationId: string | null): number {
+  const { pathname, search } = useLocation()
+  const [changes, setChanges] = useState(0)
+  useEffect(() => onRemindersChanged(() => setChanges((n) => n + 1)), [])
+  const { data } = useAsyncData(organizationId ? `lembretes-contagem:${organizationId}:${pathname}${search}:${changes}` : null, () =>
+    listReminders(organizationId!),
+  )
+  return data ? data.filter((r) => !isContacted(r)).length : 0
+}
 
 interface SidebarProps {
   /** Chamado quando o utilizador escolhe uma página (usado para fechar o menu no telemóvel). */
   onNavigate?: () => void
 }
 
-function NavigationLink({ item, onNavigate }: { item: NavItem; onNavigate?: () => void }) {
+function NavigationLink({ item, onNavigate, badge }: { item: NavItem; onNavigate?: () => void; badge?: number }) {
   return (
     <NavLink
       to={item.path}
@@ -26,7 +40,12 @@ function NavigationLink({ item, onNavigate }: { item: NavItem; onNavigate?: () =
       }
     >
       <Icon name={item.icon} className="size-5 shrink-0" />
-      {item.label}
+      <span className="flex-1">{item.label}</span>
+      {badge ? (
+        <span className="rounded-full bg-emerald-600 px-2 py-0.5 text-xs font-semibold text-white" aria-label={`${badge} por contactar`}>
+          {badge}
+        </span>
+      ) : null}
     </NavLink>
   )
 }
@@ -34,6 +53,7 @@ function NavigationLink({ item, onNavigate }: { item: NavItem; onNavigate?: () =
 export function Sidebar({ onNavigate }: SidebarProps) {
   const { user, signOut } = useAuth()
   const { organization } = useOrganization()
+  const pendingReminders = usePendingReminderCount(organization?.id ?? null)
   const displayName = (user?.user_metadata?.full_name as string | undefined) || user?.email
 
   return (
@@ -57,7 +77,12 @@ export function Sidebar({ onNavigate }: SidebarProps) {
 
       <nav aria-label="Navegação principal" className="flex flex-1 flex-col gap-1 overflow-y-auto p-3">
         {mainNavigation.map((item) => (
-          <NavigationLink key={item.path} item={item} onNavigate={onNavigate} />
+          <NavigationLink
+            key={item.path}
+            item={item}
+            onNavigate={onNavigate}
+            badge={item.path === '/oportunidades' ? pendingReminders : undefined}
+          />
         ))}
 
         <div className="mt-auto border-t border-slate-200 pt-3">

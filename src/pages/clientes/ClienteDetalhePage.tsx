@@ -4,6 +4,7 @@ import { Alert, Button, Card, ConfirmDialog, Icon, PageHeader, Spinner } from '.
 import { getErrorMessage } from '../../features/auth/authErrors'
 import { deleteCustomer, getCustomer } from '../../features/customers/customersApi'
 import { useOrganization } from '../../features/organization/useOrganization'
+import { VehicleServices } from '../../features/services/VehicleServices'
 import { VehicleForm } from '../../features/vehicles/VehicleForm'
 import {
   createVehicle,
@@ -40,6 +41,8 @@ export function ClienteDetalhePage() {
   const [editingVehicle, setEditingVehicle] = useState<'new' | string | null>(null)
   const [toDelete, setToDelete] = useState<{ type: 'customer' } | { type: 'vehicle'; vehicle: Vehicle } | null>(null)
   const [isDeleting, setIsDeleting] = useState(false)
+  // Veículos com o histórico de serviços aberto (com um só veículo, abre logo)
+  const [toggledVehicles, setToggledVehicles] = useState<string[]>([])
   const [actionError, setActionError] = useState<string | null>(null)
 
   if (customerQuery.error) {
@@ -84,6 +87,12 @@ export function ClienteDetalhePage() {
   }
 
   const vehicles = vehiclesQuery.data ?? []
+  const openByDefault = vehicles.length === 1
+  const isServicesOpen = (vehicleId: string) => toggledVehicles.includes(vehicleId) !== openByDefault
+  const toggleServices = (vehicleId: string) =>
+    setToggledVehicles((current) =>
+      current.includes(vehicleId) ? current.filter((id) => id !== vehicleId) : [...current, vehicleId],
+    )
 
   return (
     <>
@@ -192,7 +201,8 @@ export function ClienteDetalhePage() {
                   />
                 </li>
               ) : (
-                <li key={vehicle.id} className="flex items-center gap-3 py-3">
+                <li key={vehicle.id} className="py-3">
+                  <div className="flex items-center gap-3">
                   <span className="rounded-md border border-slate-300 bg-white px-2 py-1 font-mono text-sm font-semibold tracking-wide text-slate-800">
                     {formatPlate(vehicle.plate)}
                   </span>
@@ -208,6 +218,14 @@ export function ClienteDetalhePage() {
                   </div>
                   {editingVehicle === null && (
                     <div className="flex shrink-0 gap-1">
+                      <Button
+                        size="sm"
+                        variant="secondary"
+                        aria-expanded={isServicesOpen(vehicle.id)}
+                        onClick={() => toggleServices(vehicle.id)}
+                      >
+                        Serviços
+                      </Button>
                       <Button size="sm" variant="ghost" icon="pencil" onClick={() => setEditingVehicle(vehicle.id)} aria-label={`Editar ${formatPlate(vehicle.plate)}`}>
                         <span className="sr-only sm:not-sr-only">Editar</span>
                       </Button>
@@ -215,6 +233,10 @@ export function ClienteDetalhePage() {
                         <Button size="sm" variant="ghost" icon="trash" onClick={() => setToDelete({ type: 'vehicle', vehicle })} aria-label={`Apagar ${formatPlate(vehicle.plate)}`} />
                       )}
                     </div>
+                  )}
+                  </div>
+                  {isServicesOpen(vehicle.id) && (
+                    <VehicleServices organizationId={organization.id} vehicleId={vehicle.id} canDelete={isOwner} />
                   )}
                 </li>
               ),

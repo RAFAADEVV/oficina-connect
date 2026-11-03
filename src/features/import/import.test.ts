@@ -140,6 +140,20 @@ describe('buildImport', () => {
     ])
   })
 
+  it('lê a próxima revisão e rejeita datas anteriores ao serviço', () => {
+    const withNext = detectMapping(['Nome', 'Telefone', 'Matrícula', 'Data', 'Serviço', 'Próxima revisão'])
+    const plan = buildImport(
+      [
+        ['Ana', '912345678', 'AA00BB', '10/03/2026', 'Revisão', '10/03/2027'],
+        ['Rui', '913333333', 'CC11DD', '10/03/2026', 'Revisão', '01/01/2026'],
+      ],
+      withNext,
+    )
+    expect(withNext.next_service_date).toBe(5)
+    expect(plan.rows.map((r) => r.next_service_date)).toEqual(['2027-03-10', null])
+    expect(plan.issues).toHaveLength(1)
+  })
+
   it('importa o cliente mas descarta dados inválidos com aviso', () => {
     const plan = buildImport([['Ana', '912345678', 'ana@', '111111111', 'AA00BB', 1700, '31/02/2026', 'Revisão']], mapping)
     expect(plan.rows).toHaveLength(1)

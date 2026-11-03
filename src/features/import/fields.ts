@@ -18,6 +18,7 @@ export type ImportField =
   | 'service_date'
   | 'service_description'
   | 'service_mileage'
+  | 'next_service_date'
 
 export interface FieldDefinition {
   field: ImportField
@@ -41,6 +42,7 @@ export const IMPORT_FIELDS: FieldDefinition[] = [
   { field: 'service_date', label: 'Data do serviço', group: 'Serviço', synonyms: ['data', 'dataservico', 'datadoservico', 'dataintervencao', 'datadaintervencao', 'datareparacao', 'date'] },
   { field: 'service_description', label: 'Serviço', group: 'Serviço', synonyms: ['servico', 'descricao', 'descricaoservico', 'trabalho', 'trabalhos', 'intervencao', 'tiposervico', 'tipodeservico', 'service'] },
   { field: 'service_mileage', label: 'Km no serviço', group: 'Serviço', synonyms: ['kmservico', 'kmdoservico', 'kmintervencao', 'kmnaintervencao', 'kmentrada'] },
+  { field: 'next_service_date', label: 'Próxima revisão', group: 'Serviço', synonyms: ['proximarevisao', 'proxrevisao', 'datproximarevisao', 'dataproximarevisao', 'proximamanutencao', 'proximoservico'] },
 ]
 
 /** Cabeçalhos do modelo de importação, pela ordem das colunas. */
@@ -58,6 +60,7 @@ export const TEMPLATE_HEADERS = [
   'Data do serviço',
   'Serviço',
   'Km do serviço',
+  'Próxima revisão',
 ]
 
 /** "Data do Serviço" → "datadoservico" */

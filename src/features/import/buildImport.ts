@@ -18,6 +18,8 @@ export interface ImportRow {
   service_date: string | null
   service_description: string | null
   service_mileage: number | null
+  /** Próxima revisão combinada (AAAA-MM-DD). O tipo de serviço é reconhecido pela base de dados a partir da descrição. */
+  next_service_date: string | null
 }
 
 export interface RowIssue {
@@ -135,6 +137,7 @@ export function buildImport(dataRows: Cell[][], mapping: ColumnMapping, firstLin
     let serviceDate: string | null = null
     let serviceDescription: string | null = null
     let serviceMileage: number | null = null
+    let nextServiceDate: string | null = null
     const rawDate = text(row, 'service_date')
     const description = truncate(text(row, 'service_description'), 500)
 
@@ -151,6 +154,15 @@ export function buildImport(dataRows: Cell[][], mapping: ColumnMapping, firstLin
         serviceDescription = description
         const parsedServiceMileage = parseInteger(get(row, 'service_mileage'))
         serviceMileage = typeof parsedServiceMileage === 'number' && parsedServiceMileage <= 3_000_000 ? parsedServiceMileage : null
+        const rawNext = text(row, 'next_service_date')
+        if (rawNext) {
+          const parsedNext = parseDate(get(row, 'next_service_date'))
+          if (!parsedNext || parsedNext <= parsed || parsedNext >= '2100-01-01') {
+            warn(`Próxima revisão inválida ("${rawNext}") — tem de ser depois da data do serviço; não será importada.`)
+          } else {
+            nextServiceDate = parsedNext
+          }
+        }
         services += 1
       }
     }
@@ -172,6 +184,7 @@ export function buildImport(dataRows: Cell[][], mapping: ColumnMapping, firstLin
       service_date: serviceDate,
       service_description: serviceDescription,
       service_mileage: serviceMileage,
+      next_service_date: nextServiceDate,
     })
   })
 

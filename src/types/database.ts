@@ -7,6 +7,10 @@
  */
 
 export type OrganizationRole = 'owner' | 'member'
+export type ServiceType = 'revisao' | 'oleo' | 'pneus' | 'travoes' | 'outro'
+export type ReminderStage = 'mes' | 'semana' | 'atrasado'
+export type ContactOutcome = 'enviado' | 'agendado' | 'sem_resposta' | 'ja_fez' | 'nao_quer'
+export type DueSource = 'combinado' | 'combinado_km' | 'habito' | 'padrao'
 
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[]
 
@@ -20,6 +24,7 @@ export type Database = {
         Row: {
           id: string
           name: string
+          service_interval_months: number
           created_by: string | null
           created_at: string
           updated_at: string
@@ -27,6 +32,7 @@ export type Database = {
         Insert: never
         Update: {
           name?: string
+          service_interval_months?: number
         }
         Relationships: []
       }
@@ -135,6 +141,9 @@ export type Database = {
           service_date: string
           description: string
           mileage: number | null
+          service_type: ServiceType
+          next_service_date: string | null
+          next_service_mileage: number | null
           created_by: string | null
           created_at: string
           updated_at: string
@@ -145,11 +154,48 @@ export type Database = {
           service_date: string
           description: string
           mileage?: number | null
+          service_type?: ServiceType
+          next_service_date?: string | null
+          next_service_mileage?: number | null
         }
         Update: {
           service_date?: string
           description?: string
           mileage?: number | null
+          service_type?: ServiceType
+          next_service_date?: string | null
+          next_service_mileage?: number | null
+        }
+        Relationships: []
+      }
+      contact_logs: {
+        Row: {
+          id: string
+          organization_id: string
+          customer_id: string
+          vehicle_id: string
+          due_date: string
+          stage: ReminderStage
+          channel: 'whatsapp' | 'telefone' | 'outro'
+          outcome: ContactOutcome
+          notes: string | null
+          created_by: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          organization_id: string
+          customer_id: string
+          vehicle_id: string
+          due_date: string
+          stage: ReminderStage
+          channel?: 'whatsapp' | 'telefone' | 'outro'
+          outcome?: ContactOutcome
+          notes?: string | null
+        }
+        Update: {
+          outcome?: ContactOutcome
+          notes?: string | null
         }
         Relationships: []
       }
@@ -184,6 +230,28 @@ export type Database = {
       create_organization: {
         Args: { p_name: string }
         Returns: string
+      }
+      get_service_reminders: {
+        Args: { p_organization_id: string; p_today?: string }
+        Returns: {
+          vehicle_id: string
+          customer_id: string
+          customer_name: string
+          customer_phone: string
+          plate: string
+          make: string | null
+          model: string | null
+          last_service_date: string
+          last_service_mileage: number | null
+          due_date: string
+          due_mileage: number | null
+          due_source: DueSource
+          stage: ReminderStage
+          contacted_at: string | null
+          contact_id: string | null
+          contact_stage: ReminderStage | null
+          contact_outcome: ContactOutcome | null
+        }[]
       }
       import_records: {
         Args: { p_organization_id: string; p_rows: Json }
