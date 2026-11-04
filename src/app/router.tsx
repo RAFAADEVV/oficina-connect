@@ -5,6 +5,7 @@ import { CriarOficinaPage } from '../pages/auth/CriarOficinaPage'
 import { EntrarPage } from '../pages/auth/EntrarPage'
 import { NovaPasswordPage } from '../pages/auth/NovaPasswordPage'
 import { RecuperarPasswordPage } from '../pages/auth/RecuperarPasswordPage'
+import { VerificarCodigoPage } from '../pages/auth/VerificarCodigoPage'
 import { ClienteDetalhePage } from '../pages/clientes/ClienteDetalhePage'
 import { ClienteFormPage } from '../pages/clientes/ClienteFormPage'
 import { ClientesPage } from '../pages/clientes/ClientesPage'
@@ -43,6 +44,7 @@ export const router = createBrowserRouter([
       {
         element: <RequireAuth />,
         children: [
+          { path: 'verificar-codigo', element: <VerificarCodigoPage /> },
           { path: 'criar-oficina', element: <CriarOficinaPage /> },
           {
             element: <RequireOrganization />,

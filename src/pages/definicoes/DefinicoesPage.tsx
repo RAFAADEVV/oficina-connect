@@ -1,5 +1,7 @@
 import { Alert, Card, Icon, PageHeader, Spinner } from '../../components/ui'
 import { isSupabaseConfigured } from '../../config/env'
+import { AuditLog } from '../../features/audit/AuditLog'
+import { SecuritySettings } from '../../features/auth/SecuritySettings'
 import { getOrganizationDetails, updateOrganization } from '../../features/organization/organizationApi'
 import { OrganizationForm } from '../../features/organization/OrganizationForm'
 import { useOrganization } from '../../features/organization/useOrganization'
@@ -35,7 +37,12 @@ export function DefinicoesPage() {
           )}
         </Card>
 
-        <Card title="Estado do sistema" className="self-start">
+        <div className="flex flex-col gap-6">
+        <Card title="Segurança da sua conta">
+          <SecuritySettings />
+        </Card>
+
+        <Card title="Estado do sistema">
           <div className="flex items-center gap-3 text-sm">
             <span
               className={cn('size-2.5 rounded-full', isSupabaseConfigured ? 'bg-emerald-500' : 'bg-amber-500')}
@@ -51,7 +58,14 @@ export function DefinicoesPage() {
             Os dados da oficina aparecem nos relatórios de serviço.
           </p>
         </Card>
+        </div>
       </div>
+
+      {organization?.role === 'owner' && (
+        <Card title="Registo de eliminações" className="mt-6">
+          <AuditLog organizationId={organization.id} />
+        </Card>
+      )}
     </>
   )
 }

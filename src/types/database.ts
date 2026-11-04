@@ -226,6 +226,20 @@ export type Database = {
         }
         Relationships: []
       }
+      audit_events: {
+        Row: {
+          id: number
+          organization_id: string
+          actor_id: string | null
+          action: 'delete'
+          table_name: string
+          record_id: string
+          created_at: string
+        }
+        Insert: never
+        Update: never
+        Relationships: []
+      }
       imports: {
         Row: {
           id: string

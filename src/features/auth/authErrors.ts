@@ -22,6 +22,12 @@ const messages: Record<string, string> = {
   signup_disabled: 'O registo de novas contas está desativado.',
   session_not_found: 'A sua sessão expirou. Entre novamente.',
   otp_expired: 'O link expirou ou já foi usado. Peça um novo.',
+  mfa_verification_failed: 'Código incorreto ou expirado. Confirme a hora do telemóvel e tente novamente.',
+  mfa_verification_rejected: 'Código incorreto ou expirado. Tente novamente.',
+  mfa_challenge_expired: 'O pedido expirou. Introduza um código novo.',
+  insufficient_aal: 'Confirme primeiro o código de autenticação em dois passos.',
+  too_many_enrolled_mfa_factors: 'Já tem demasiados dispositivos registados. Desative um antes de adicionar outro.',
+  captcha_failed: 'A verificação de segurança falhou. Tente novamente.',
   // Erros da base de dados (códigos PostgreSQL)
   '42501': 'Não tem permissão para fazer esta ação.',
   '23514': 'Alguns dados não são válidos. Verifique os campos e tente novamente.',

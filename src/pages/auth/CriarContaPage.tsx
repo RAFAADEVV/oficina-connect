@@ -1,8 +1,10 @@
-import { useState, type FormEvent } from 'react'
+import { useRef, useState, type FormEvent } from 'react'
 import { Link } from 'react-router'
 import { AuthLayout } from '../../components/layout/AuthLayout'
 import { Alert, Button, Icon, TextField } from '../../components/ui'
 import { getErrorMessage } from '../../features/auth/authErrors'
+import { isCaptchaEnabled } from '../../config/env'
+import { Turnstile, type TurnstileHandle } from '../../features/auth/Turnstile'
 import {
   appUrl,
   MIN_PASSWORD_LENGTH,
@@ -32,6 +34,8 @@ export function CriarContaPage() {
   const [formError, setFormError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [sentTo, setSentTo] = useState<string | null>(null)
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null)
+  const captchaRef = useRef<TurnstileHandle>(null)
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -49,6 +53,10 @@ export function CriarContaPage() {
       setFormError('Para criar conta tem de aceitar o tratamento dos seus dados.')
       return
     }
+    if (isCaptchaEnabled && !captchaToken) {
+      setFormError('Confirme a verificação de segurança.')
+      return
+    }
 
     setIsSubmitting(true)
     const { data, error } = await supabase.auth.signUp({
@@ -57,9 +65,11 @@ export function CriarContaPage() {
       options: {
         data: { full_name: fullName.trim() },
         emailRedirectTo: appUrl('/'),
+        captchaToken: captchaToken ?? undefined,
       },
     })
     setIsSubmitting(false)
+    captchaRef.current?.reset()
 
     if (error) {
       setFormError(getErrorMessage(error))
@@ -152,6 +162,8 @@ export function CriarContaPage() {
             Aceito que os meus dados sejam tratados para criar e gerir a conta, de acordo com o RGPD.
           </span>
         </label>
+
+        <Turnstile ref={captchaRef} onToken={setCaptchaToken} />
 
         <Button type="submit" className="w-full" isLoading={isSubmitting}>
           Criar conta

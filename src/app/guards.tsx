@@ -10,13 +10,25 @@ import { useOrganization } from '../features/organization/useOrganization'
  * A proteção real dos dados está nas regras RLS da base de dados.
  */
 
-/** Só deixa passar quem tem sessão iniciada. Os outros vão para /entrar. */
+export const MFA_PATH = '/verificar-codigo'
+
+/**
+ * Só deixa passar quem tem sessão iniciada (os outros vão para /entrar)
+ * e, se a conta tiver autenticação em dois passos, quem já introduziu o código.
+ */
 export function RequireAuth() {
-  const { user, isLoading } = useAuth()
+  const { user, isLoading, needsMfa } = useAuth()
   const location = useLocation()
 
   if (isLoading) return <FullPageLoader />
   if (!user) return <Navigate to="/entrar" replace state={{ from: location.pathname }} />
+  if (needsMfa && location.pathname !== MFA_PATH) {
+    return <Navigate to={MFA_PATH} replace state={{ from: location.pathname }} />
+  }
+  if (!needsMfa && location.pathname === MFA_PATH) {
+    const from = (location.state as { from?: string } | null)?.from
+    return <Navigate to={from && from !== MFA_PATH ? from : '/'} replace />
+  }
   return <Outlet />
 }
 

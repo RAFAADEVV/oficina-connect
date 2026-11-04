@@ -1,6 +1,23 @@
 # Cabeçalhos de segurança aplicados pelo Cloudflare Pages em todas as páginas.
+#
+# Content-Security-Policy (CSP): o navegador só carrega código, ligações e imagens destas origens.
+#   - script-src: só a própria app (+ Cloudflare Turnstile, a verificação anti-robô opcional)
+#   - connect-src: só a própria app e o Supabase (base de dados e login)
+#   - worker-src blob:: a leitura de ficheiros Excel usa um "worker" criado pela própria app
+#   - font-src data:: o Vite embute algumas letras pequenas diretamente no código
+#   - img-src data:: o código QR da autenticação em dois passos vem como imagem "data:"
+#   - frame-ancestors 'none': ninguém pode meter a app dentro de outro site (clickjacking)
+# Se um dia usar outro serviço externo, acrescente aqui a origem dele.
 /*
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' https://*.supabase.co wss://*.supabase.co; worker-src 'self' blob:; frame-src https://challenges.cloudflare.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
   X-Content-Type-Options: nosniff
   X-Frame-Options: DENY
   Referrer-Policy: strict-origin-when-cross-origin
-  Permissions-Policy: camera=(), microphone=(), geolocation=()
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()
+  Cross-Origin-Opener-Policy: same-origin
+  Cross-Origin-Resource-Policy: same-origin
+
+# Os ficheiros da app têm nome único (com código): podem ficar em cache muito tempo
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable

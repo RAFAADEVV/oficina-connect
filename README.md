@@ -1,4 +1,6 @@
-# Oficina Connect
+# RevyAuto
+
+*Clientes que voltam.*
 
 Plataforma web de acompanhamento de clientes para oficinas automóveis: importar clientes e veículos, identificar quem deve voltar à oficina, preparar mensagens de WhatsApp e acompanhar resultados.
 
@@ -103,12 +105,17 @@ oficina-connect/
 
 ---
 
-## Variáveis de ambiente e segurança
+## Segurança
+
+Ver **[SEGURANCA.md](SEGURANCA.md)**: o que está protegido e as definições a ligar no Supabase, no Cloudflare e no GitHub.
+
+## Variáveis de ambiente
 
 | Variável | Descrição |
 |---|---|
 | `VITE_SUPABASE_URL` | URL do projeto Supabase |
 | `VITE_SUPABASE_ANON_KEY` | Chave pública **anon / publishable** do Supabase |
+| `VITE_TURNSTILE_SITE_KEY` | Opcional: chave pública do Cloudflare Turnstile (anti-robô) |
 
 Regras importantes:
 

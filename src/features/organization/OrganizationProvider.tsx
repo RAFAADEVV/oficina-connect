@@ -42,12 +42,14 @@ async function fetchOrganization(userId: string): Promise<LoadResult> {
 }
 
 export function OrganizationProvider({ children }: { children: ReactNode }) {
-  const { user } = useAuth()
+  const { user, aal, needsMfa } = useAuth()
   const userId = user?.id ?? null
+  // Só carrega depois do código de dois passos (se ativo); volta a carregar quando o nível muda
+  const loadKey = userId && !needsMfa ? `${userId}:${aal ?? 'aal1'}` : null
   const [result, setResult] = useState<LoadResult | null>(null)
 
   useEffect(() => {
-    if (!userId) return
+    if (!userId || !loadKey) return
     let cancelled = false
     void fetchOrganization(userId).then((loaded) => {
       if (!cancelled) setResult(loaded)
@@ -55,19 +57,20 @@ export function OrganizationProvider({ children }: { children: ReactNode }) {
     return () => {
       cancelled = true
     }
-  }, [userId])
+  }, [userId, loadKey])
 
   const reload = useCallback(async () => {
-    if (!userId) return
+    if (!userId || !loadKey) return
     setResult(await fetchOrganization(userId))
-  }, [userId])
+  }, [userId, loadKey])
 
   const value = useMemo<OrganizationContextValue>(() => {
-    // Ignora resultados de um utilizador anterior (ex.: sair e entrar com outra conta)
-    const current = userId && result?.userId === userId ? result : null
+    // Ignora resultados de outro utilizador (ex.: sair e entrar com outra conta).
+    // Ao mudar o nível de autenticação, mantém os dados anteriores enquanto recarrega (sem ecrã de carregamento).
+    const current = loadKey && userId && result?.userId === userId ? result : null
     return {
       organization: current?.organization ?? null,
-      isLoading: Boolean(userId) && !current,
+      isLoading: Boolean(loadKey) && !current,
       error: current?.error ?? null,
       createOrganization: async (name: string) => {
         if (!userId) throw new Error('Sem sessão')
@@ -77,7 +80,7 @@ export function OrganizationProvider({ children }: { children: ReactNode }) {
       },
       reload,
     }
-  }, [userId, result, reload])
+  }, [userId, loadKey, result, reload])
 
   return <OrganizationContext.Provider value={value}>{children}</OrganizationContext.Provider>
 }

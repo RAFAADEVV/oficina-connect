@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Outlet } from 'react-router'
+import { useIdleLogout } from '../../features/auth/useIdleLogout'
 import { Icon } from '../ui/Icon'
 import { Sidebar } from './Sidebar'
 import { Topbar } from './Topbar'
@@ -10,6 +11,7 @@ import { Topbar } from './Topbar'
  * - Telemóvel/tablet: barra superior com botão que abre a sidebar como painel deslizante.
  */
 export function AppLayout() {
+  useIdleLogout()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   const closeMenu = () => setIsMobileMenuOpen(false)

@@ -37,3 +37,12 @@ export function getSupabaseEnv(): SupabaseEnv {
   }
   return { url: supabaseUrl, anonKey: supabaseAnonKey }
 }
+
+/**
+ * Chave PÚBLICA do Cloudflare Turnstile (verificação anti-robô), opcional.
+ * A chave secreta fica só no Supabase, nunca aqui.
+ */
+export const turnstileSiteKey = readOptional(import.meta.env.VITE_TURNSTILE_SITE_KEY)
+
+/** true quando a verificação anti-robô (Turnstile) está configurada */
+export const isCaptchaEnabled = Boolean(turnstileSiteKey)
