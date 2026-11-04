@@ -240,6 +240,22 @@ export type Database = {
         Update: never
         Relationships: []
       }
+      organization_invites: {
+        Row: {
+          id: string
+          organization_id: string
+          role: OrganizationRole
+          created_by: string | null
+          created_at: string
+          expires_at: string
+          used_by: string | null
+          used_at: string | null
+          revoked_at: string | null
+        }
+        Insert: never
+        Update: never
+        Relationships: []
+      }
       imports: {
         Row: {
           id: string
@@ -271,6 +287,40 @@ export type Database = {
       create_organization: {
         Args: { p_name: string }
         Returns: string
+      }
+      create_invite: {
+        Args: { p_organization_id: string }
+        Returns: { code: string; expires_at: string }[]
+      }
+      revoke_invite: {
+        Args: { p_invite_id: string }
+        Returns: undefined
+      }
+      accept_invite: {
+        Args: { p_code: string }
+        Returns: string | null
+      }
+      list_team: {
+        Args: { p_organization_id: string }
+        Returns: {
+          user_id: string
+          full_name: string | null
+          email: string
+          role: OrganizationRole
+          joined_at: string
+        }[]
+      }
+      remove_member: {
+        Args: { p_organization_id: string; p_user_id: string }
+        Returns: undefined
+      }
+      leave_organization: {
+        Args: { p_organization_id: string }
+        Returns: undefined
+      }
+      update_service_record: {
+        Args: { p_service_id: string; p_service: Json; p_parts?: Json }
+        Returns: undefined
       }
       create_service_record: {
         Args: { p_vehicle_id: string; p_service: Json; p_parts?: Json }

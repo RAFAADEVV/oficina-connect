@@ -18,6 +18,8 @@ export interface ServiceInput {
 }
 
 export interface PartInput {
+  /** Só ao editar: id de uma peça que já existia neste serviço */
+  id?: string
   description: string
   reference: string | null
   quantity: number
@@ -77,6 +79,29 @@ export async function createService(vehicleId: string, input: ServiceInput, part
   })
   if (error) throw error
   return data
+}
+
+export async function listServiceParts(serviceId: string): Promise<ServicePart[]> {
+  const { data, error } = await supabase
+    .from('service_parts')
+    .select('*')
+    .eq('service_record_id', serviceId)
+    .order('position')
+  if (error) throw error
+  return data
+}
+
+/**
+ * Corrige um serviço já registado e as suas peças, de uma só vez.
+ * Peças com id são alteradas, as novas acrescentadas e as que faltam apagadas (ficam no registo de eliminações).
+ */
+export async function updateService(serviceId: string, input: ServiceInput, parts: PartInput[]): Promise<void> {
+  const { error } = await supabase.rpc('update_service_record', {
+    p_service_id: serviceId,
+    p_service: input as unknown as Json,
+    p_parts: parts as unknown as Json,
+  })
+  if (error) throw error
 }
 
 /** Apaga um serviço e as suas peças. Só o Dono pode (garantido pelo RLS). */

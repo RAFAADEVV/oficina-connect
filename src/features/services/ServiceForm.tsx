@@ -12,9 +12,13 @@ import {
   serviceTypeLabel,
   type PartInput,
   type ServiceInput,
+  type ServicePart,
+  type ServiceRecord,
 } from './servicesApi'
 
 interface ServiceFormProps {
+  /** Ao editar: o serviço e as peças atuais */
+  initial?: { service: ServiceRecord; parts: ServicePart[] }
   onSubmit: (input: ServiceInput, parts: PartInput[]) => Promise<void>
   onCancel: () => void
 }
@@ -31,6 +35,8 @@ const NEXT_CHOICES: { value: NextChoice; label: string }[] = [
 
 interface PartRow {
   key: number
+  /** Peça já gravada (ao editar) */
+  id?: string
   description: string
   reference: string
   quantity: string
@@ -54,21 +60,41 @@ const smallInputClass =
 
 let nextPartKey = 1
 
+/** Ao editar, mostra a escolha que corresponde à data já combinada. */
+function initialNextChoice(service: ServiceRecord): NextChoice {
+  if (!service.next_service_date) return 'none'
+  const months = ([6, 12, 24] as const).find((m) => addMonths(service.service_date, m) === service.next_service_date)
+  return months ?? 'date'
+}
+
 /** Registar um serviço: dados técnicos, peças aplicadas e próxima revisão. Sem preços. */
-export function ServiceForm({ onSubmit, onCancel }: ServiceFormProps) {
+export function ServiceForm({ initial, onSubmit, onCancel }: ServiceFormProps) {
   const today = todayIso()
-  const [serviceDate, setServiceDate] = useState(today)
-  const [serviceType, setServiceType] = useState<ServiceType>('revisao')
-  const [description, setDescription] = useState('')
-  const [mileage, setMileage] = useState('')
-  const [problem, setProblem] = useState('')
-  const [workDone, setWorkDone] = useState('')
-  const [checklist, setChecklist] = useState<string[]>([])
-  const [recommendations, setRecommendations] = useState('')
-  const [parts, setParts] = useState<PartRow[]>([])
-  const [nextChoice, setNextChoice] = useState<NextChoice>(12)
-  const [nextDate, setNextDate] = useState('')
-  const [nextKm, setNextKm] = useState('')
+  const s = initial?.service
+  const [serviceDate, setServiceDate] = useState(s?.service_date ?? today)
+  const [serviceType, setServiceType] = useState<ServiceType>(s?.service_type ?? 'revisao')
+  // Ao editar, o título só fica preenchido se for diferente do nome do tipo
+  const [description, setDescription] = useState(
+    s && s.description !== serviceTypeLabel(s.service_type) ? s.description : '',
+  )
+  const [mileage, setMileage] = useState(s?.mileage != null ? String(s.mileage) : '')
+  const [problem, setProblem] = useState(s?.problem ?? '')
+  const [workDone, setWorkDone] = useState(s?.work_done ?? '')
+  const [checklist, setChecklist] = useState<string[]>(s?.checklist ?? [])
+  const [recommendations, setRecommendations] = useState(s?.recommendations ?? '')
+  const [parts, setParts] = useState<PartRow[]>(
+    () =>
+      initial?.parts.map((p) => ({
+        key: nextPartKey++,
+        id: p.id,
+        description: p.description,
+        reference: p.reference ?? '',
+        quantity: String(p.quantity).replace('.', ','),
+      })) ?? [],
+  )
+  const [nextChoice, setNextChoice] = useState<NextChoice>(s ? initialNextChoice(s) : 12)
+  const [nextDate, setNextDate] = useState(s?.next_service_date ?? '')
+  const [nextKm, setNextKm] = useState(s?.next_service_mileage != null ? String(s.next_service_mileage) : '')
   const [errors, setErrors] = useState<Partial<Record<'serviceDate' | 'mileage' | 'nextDate' | 'nextKm' | 'parts', string>>>({})
   const [formError, setFormError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -128,6 +154,7 @@ export function ServiceForm({ onSubmit, onCancel }: ServiceFormProps) {
           recommendations: emptyToNull(recommendations),
         },
         filledParts.map((p) => ({
+          ...(p.id ? { id: p.id } : {}),
           description: p.description.trim(),
           reference: emptyToNull(p.reference),
           quantity: parseQuantity(p.quantity) ?? 1,
@@ -276,7 +303,7 @@ export function ServiceForm({ onSubmit, onCancel }: ServiceFormProps) {
                 className={cn(
                   'h-9 rounded-lg border px-3 text-sm font-medium',
                   nextChoice === choice.value
-                    ? 'border-brand-600 bg-brand-600 text-white'
+                    ? 'border-brand-600 bg-brand-600 text-ink'
                     : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-50',
                 )}
               >
@@ -325,7 +352,7 @@ export function ServiceForm({ onSubmit, onCancel }: ServiceFormProps) {
           Cancelar
         </Button>
         <Button type="submit" isLoading={isSubmitting}>
-          Guardar serviço
+          {initial ? 'Guardar alterações' : 'Guardar serviço'}
         </Button>
       </div>
     </form>

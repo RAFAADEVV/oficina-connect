@@ -12,7 +12,7 @@ import type { ReminderStage } from '../../types/database'
 const STAGE_DOT: Record<ReminderStage, string> = {
   atrasado: 'bg-red-500',
   semana: 'bg-amber-500',
-  mes: 'bg-brand-500',
+  mes: 'bg-slate-400',
 }
 
 const STEPS = [

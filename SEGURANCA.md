@@ -13,10 +13,12 @@ Este documento descreve como a plataforma está protegida e as definições que 
 - **Colunas protegidas:** não é possível mudar um registo de oficina nem falsificar o autor (`created_by`).
 - **Autenticação em dois passos (MFA):** quem a ativa só acede aos dados depois de introduzir o código. Regra *restritiva* em todas as tabelas (migração 0006).
 - **Limite de 5 oficinas por conta** (anti-abuso).
+- **Convites de equipa** (migração 0007): o código só é mostrado uma vez e a base de dados guarda apenas o resumo (SHA-256). Expira em 7 dias, só pode ser usado uma vez, e há um máximo de 10 tentativas por hora por conta, para não ser possível adivinhar códigos. Só o Dono convida e remove pessoas, e o Dono não pode ser removido.
+- **Corrigir serviços** (migração 0008): qualquer pessoa da oficina pode corrigir um serviço. As peças retiradas ficam no registo de eliminações, com o nome de quem as retirou.
 - **Registo de auditoria:** cada cliente, veículo, serviço ou peça apagado fica registado (quem e quando). Só o Dono vê.
 - **Validação dos dados** na própria base de dados: telefone, email, NIF, matrícula, tamanhos máximos.
 - **Funções privilegiadas** com `search_path` fixo e sem acesso para visitantes sem sessão.
-- **Testes de segurança:** `supabase/tests/0001` a `0006`, 72 testes no total.
+- **Testes de segurança:** `supabase/tests/0001` a `0008`, 91 testes no total.
 
 ### Aplicação
 - **Content-Security-Policy** e outros cabeçalhos de segurança (`public/_headers`): só carrega código da própria app, só fala com o Supabase, não pode ser metida dentro de outro site.
@@ -91,7 +93,7 @@ O RevyAuto guarda dados pessoais dos clientes das oficinas. A oficina é a **res
 - **Contrato de subcontratação** (art. 28.º do RGPD) com cada oficina.
 - **Lista de subcontratantes** que usas: Supabase (dados na UE) e Cloudflare.
 - **Plano para fugas de dados:** notificar a **CNPD** em até 72 horas.
-- **Prazo de conservação** dos dados e forma de apagar ou exportar os dados de um cliente quando ele pedir.
+- **Prazo de conservação** dos dados. Exportar os dados de um cliente já existe (botão **Exportar dados** na ficha do cliente) e apagar também (só o Dono).
 
 ---
 

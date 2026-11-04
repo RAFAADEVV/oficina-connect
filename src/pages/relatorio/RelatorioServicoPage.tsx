@@ -185,7 +185,7 @@ export function RelatorioServicoPage() {
             <div className="w-56 border-t border-slate-400 pt-1 text-center text-xs text-slate-500">O responsável</div>
           </div>
           <p className="mt-8 border-t border-slate-200 pt-2 text-center text-xs text-slate-500">
-            Este documento não é uma fatura. Relatório técnico do serviço efetuado ao veículo.
+            Este documento não é uma fatura. Relatório técnico do serviço efetuado ao veículo. · Gerado com RevyAuto
           </p>
         </footer>
       </article>

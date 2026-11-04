@@ -79,7 +79,7 @@ export function OrganizationForm({ initial, canEdit, onSubmit }: OrganizationFor
           value={intervalMonths}
           onChange={(e) => setIntervalMonths(e.target.value)}
           error={errors.interval}
-          hint="Usado quando não há data combinada nem histórico."
+          hint="Se não houver data combinada com o cliente nem histórico de revisões, a próxima revisão é calculada com este intervalo a partir da última."
           maxLength={2}
         />
       </fieldset>

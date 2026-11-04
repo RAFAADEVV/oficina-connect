@@ -12,7 +12,7 @@ export function NaoEncontradaPage() {
       <p className="mt-2 text-sm text-slate-500">O endereço que procurou não existe ou foi alterado.</p>
       <Link
         to="/"
-        className="mt-6 inline-flex h-10 items-center gap-2 rounded-lg bg-brand-600 px-4 text-sm font-medium text-white hover:bg-brand-700"
+        className="mt-6 inline-flex h-10 items-center gap-2 rounded-lg bg-brand-600 px-4 text-sm font-medium text-ink hover:bg-brand-500"
       >
         <Icon name="arrowLeft" className="size-4" />
         Voltar ao Dashboard

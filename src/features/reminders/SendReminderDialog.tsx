@@ -97,7 +97,7 @@ export function SendReminderDialog({ reminder, organizationName, onSend, onClose
               onClick={() => void handleSend()}
               isLoading={isSaving}
               disabled={!message.trim()}
-              className="bg-emerald-600 hover:bg-emerald-700 disabled:bg-emerald-600/50"
+              variant="whatsapp"
             >
               <Icon name="phone" className="size-4" />
               Abrir no WhatsApp

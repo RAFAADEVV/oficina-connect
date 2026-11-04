@@ -18,7 +18,7 @@ export function StatCard({ label, value, icon, hint }: StatCardProps) {
           <Icon name={icon} className="size-5" />
         </span>
       </div>
-      <p className="mt-3 text-3xl font-semibold tracking-tight text-slate-900">
+      <p className="mt-3 font-display text-3xl font-extrabold tracking-tight text-graphite">
         {value ?? <span className="text-slate-300">—</span>}
       </p>
       {hint && <p className="mt-1 text-xs text-slate-500">{hint}</p>}

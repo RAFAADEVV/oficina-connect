@@ -27,7 +27,7 @@ type Tab = 'pending' | 'contacted'
 const STAGE_STYLES: Record<ReminderStage, string> = {
   atrasado: 'bg-red-50 text-red-700 ring-red-200',
   semana: 'bg-amber-50 text-amber-700 ring-amber-200',
-  mes: 'bg-brand-50 text-brand-700 ring-brand-200',
+  mes: 'bg-slate-100 text-slate-700 ring-slate-300',
 }
 
 const RESULT_OPTIONS: ContactOutcome[] = ['agendado', 'sem_resposta', 'ja_fez', 'nao_quer']
@@ -107,10 +107,7 @@ export function OportunidadesPage() {
             ))}
           </div>
         ) : (
-          <Button
-            onClick={() => setSending(reminder)}
-            className="shrink-0 bg-emerald-600 hover:bg-emerald-700"
-          >
+          <Button variant="whatsapp" onClick={() => setSending(reminder)} className="shrink-0">
             <Icon name="phone" className="size-4" />
             Enviar notificação
           </Button>

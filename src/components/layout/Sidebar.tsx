@@ -6,6 +6,7 @@ import { roleLabel, useOrganization } from '../../features/organization/useOrgan
 import { isContacted, listReminders, onRemindersChanged } from '../../features/reminders/remindersApi'
 import { cn } from '../../lib/cn'
 import { useAsyncData } from '../../lib/useAsyncData'
+import { Logo } from '../brand/Logo'
 import { Icon } from '../ui/Icon'
 
 /** Número de clientes por contactar. Atualiza sempre que se muda de página. */
@@ -42,7 +43,7 @@ function NavigationLink({ item, onNavigate, badge }: { item: NavItem; onNavigate
       <Icon name={item.icon} className="size-5 shrink-0" />
       <span className="flex-1">{item.label}</span>
       {badge ? (
-        <span className="rounded-full bg-emerald-600 px-2 py-0.5 text-xs font-semibold text-white" aria-label={`${badge} por contactar`}>
+        <span className="rounded-full bg-brand-600 px-2 py-0.5 text-xs font-bold text-ink" aria-label={`${badge} por contactar`}>
           {badge}
         </span>
       ) : null}
@@ -59,8 +60,7 @@ export function Sidebar({ onNavigate }: SidebarProps) {
   return (
     <div className="flex h-full flex-col bg-white">
       <div className="flex h-16 shrink-0 items-center gap-2.5 border-b border-slate-200 px-5">
-        <img src="/favicon.svg" alt="" className="size-8" />
-        <span className="text-base font-semibold tracking-tight text-slate-900">Oficina Connect</span>
+        <Logo size="sm" />
       </div>
 
       {organization && (

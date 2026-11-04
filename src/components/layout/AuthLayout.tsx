@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { Logo } from '../brand/Logo'
 
 interface AuthLayoutProps {
   title: string
@@ -11,9 +12,9 @@ interface AuthLayoutProps {
 export function AuthLayout({ title, description, children, footer }: AuthLayoutProps) {
   return (
     <div className="flex min-h-dvh flex-col items-center justify-center bg-slate-50 px-4 py-10">
-      <div className="mb-8 flex items-center gap-2.5">
-        <img src="/favicon.svg" alt="" className="size-9" />
-        <span className="text-lg font-semibold tracking-tight text-slate-900">Oficina Connect</span>
+      <div className="mb-8 flex flex-col items-center gap-2">
+        <Logo size="lg" />
+        <p className="font-display text-sm font-bold text-slate-500">Clientes que voltam.</p>
       </div>
 
       <div className="w-full max-w-sm rounded-xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">

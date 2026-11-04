@@ -31,7 +31,7 @@ function Stepper({ current }: { current: Step }) {
           <span
             className={cn(
               'flex size-6 items-center justify-center rounded-full text-xs font-semibold',
-              index < currentIndex && 'bg-brand-600 text-white',
+              index < currentIndex && 'bg-brand-600 text-ink',
               index === currentIndex && 'bg-brand-50 text-brand-700 ring-2 ring-brand-600',
               index > currentIndex && 'bg-slate-100 text-slate-500',
             )}

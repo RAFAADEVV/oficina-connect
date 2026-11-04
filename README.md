@@ -4,7 +4,7 @@
 
 Plataforma web de acompanhamento de clientes para oficinas automóveis: importar clientes e veículos, identificar quem deve voltar à oficina, preparar mensagens de WhatsApp e acompanhar resultados.
 
-> **Estado atual:** fundação do projeto (estrutura, navegação e páginas iniciais). Ainda não tem autenticação, base de dados nem importação.
+> **Estado atual:** MVP funcional. Contas com autenticação em dois passos, oficinas e equipa (convites), clientes e veículos, importação de Excel/CSV, histórico e registo técnico de serviços, relatório para imprimir/PDF, lembretes de revisão com mensagem de WhatsApp, exportação de dados (RGPD).
 
 ---
 
@@ -16,8 +16,8 @@ Plataforma web de acompanhamento de clientes para oficinas automóveis: importar
 | Ferramenta de build | Vite 8 |
 | Estilos | Tailwind CSS v4 (plugin `@tailwindcss/vite`) |
 | Navegação | React Router 7 |
-| Base de dados e autenticação *(próximas fases)* | Supabase (PostgreSQL, Auth, Row Level Security) |
-| Publicação *(próximas fases)* | Cloudflare Pages |
+| Base de dados e autenticação | Supabase (PostgreSQL, Auth, Row Level Security) |
+| Publicação | Cloudflare Pages |
 
 ---
 
@@ -126,12 +126,11 @@ Regras importantes:
 
 ---
 
-## Publicação (Cloudflare Pages) — próxima fase
+## Base de dados
 
-Configuração prevista:
+As migrações estão em `supabase/migrations` (`0001` a `0008`) e correm-se **por ordem**, uma única vez, no **SQL Editor** do Supabase.
+Cada uma tem um teste em `supabase/tests`. Todos têm de mostrar ✅.
 
-- **Comando de build:** `npm run build`
-- **Pasta de saída:** `dist`
-- **Variáveis:** `VITE_SUPABASE_URL` e `VITE_SUPABASE_ANON_KEY` definidas no painel do Cloudflare Pages
+## Publicação
 
-O ficheiro `public/_headers` aplica cabeçalhos de segurança básicos. Como não existe `404.html`, o Cloudflare Pages trata a aplicação como SPA e os endereços como `/clientes` funcionam ao recarregar a página.
+Ver **[PUBLICAR.md](PUBLICAR.md)**: passo a passo para o Cloudflare Pages.

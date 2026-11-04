@@ -19,7 +19,7 @@ export function ErrorPage() {
       </p>
       <a
         href="/"
-        className="mt-6 inline-flex h-10 items-center rounded-lg bg-brand-600 px-4 text-sm font-medium text-white hover:bg-brand-700"
+        className="mt-6 inline-flex h-10 items-center rounded-lg bg-brand-600 px-4 text-sm font-medium text-ink hover:bg-brand-500"
       >
         Voltar ao início
       </a>

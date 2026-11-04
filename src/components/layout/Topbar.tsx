@@ -1,3 +1,4 @@
+import { Logo } from '../brand/Logo'
 import { Icon } from '../ui/Icon'
 
 interface TopbarProps {
@@ -16,8 +17,7 @@ export function Topbar({ onOpenMenu }: TopbarProps) {
       >
         <Icon name="menu" className="size-6" />
       </button>
-      <img src="/favicon.svg" alt="" className="size-7" />
-      <span className="text-base font-semibold tracking-tight text-slate-900">Oficina Connect</span>
+      <Logo size="sm" />
     </header>
   )
 }

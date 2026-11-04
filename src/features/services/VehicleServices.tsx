@@ -5,7 +5,17 @@ import { formatDate, formatNumber } from '../../lib/format'
 import { useAsyncData } from '../../lib/useAsyncData'
 import { getErrorMessage } from '../auth/authErrors'
 import { ServiceForm } from './ServiceForm'
-import { createService, deleteService, listVehicleServices, REVISION_TYPES, serviceTypeLabel, type ServiceRecord } from './servicesApi'
+import {
+  createService,
+  deleteService,
+  listServiceParts,
+  listVehicleServices,
+  REVISION_TYPES,
+  serviceTypeLabel,
+  updateService,
+  type ServicePart,
+  type ServiceRecord,
+} from './servicesApi'
 
 interface VehicleServicesProps {
   vehicleId: string
@@ -19,6 +29,22 @@ export function VehicleServices({ vehicleId, canDelete }: VehicleServicesProps) 
   const [toDelete, setToDelete] = useState<ServiceRecord | null>(null)
   const [isDeleting, setIsDeleting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  // Serviço a ser corrigido, com as peças atuais
+  const [editing, setEditing] = useState<{ service: ServiceRecord; parts: ServicePart[] } | null>(null)
+  const [loadingEdit, setLoadingEdit] = useState<string | null>(null)
+
+  async function startEdit(service: ServiceRecord) {
+    setError(null)
+    setLoadingEdit(service.id)
+    try {
+      setEditing({ service, parts: await listServiceParts(service.id) })
+      setIsAdding(false)
+    } catch (err) {
+      setError(getErrorMessage(err))
+    } finally {
+      setLoadingEdit(null)
+    }
+  }
 
   const lastRevision = services.data?.find((s) => REVISION_TYPES.includes(s.service_type))
 
@@ -58,7 +84,23 @@ export function VehicleServices({ vehicleId, canDelete }: VehicleServicesProps) 
         </Alert>
       )}
 
-      {isAdding ? (
+      {editing ? (
+        <div className="mb-4 rounded-lg border border-slate-200 bg-white p-4">
+          <p className="mb-4 text-sm font-semibold text-slate-900">
+            Corrigir serviço de {formatDate(editing.service.service_date)}
+          </p>
+          <ServiceForm
+            key={editing.service.id}
+            initial={editing}
+            onCancel={() => setEditing(null)}
+            onSubmit={async (input, parts) => {
+              await updateService(editing.service.id, input, parts)
+              setEditing(null)
+              services.reload()
+            }}
+          />
+        </div>
+      ) : isAdding ? (
         <div className="mb-4 rounded-lg border border-slate-200 bg-white p-4">
           <ServiceForm
             onCancel={() => setIsAdding(false)}
@@ -103,6 +145,15 @@ export function VehicleServices({ vehicleId, canDelete }: VehicleServicesProps) 
                 <Icon name="file" className="size-4" />
                 <span className="hidden sm:inline">Relatório</span>
               </Link>
+              <Button
+                size="sm"
+                variant="ghost"
+                icon="pencil"
+                isLoading={loadingEdit === service.id}
+                disabled={editing !== null}
+                onClick={() => void startEdit(service)}
+                aria-label={`Corrigir serviço de ${formatDate(service.service_date)}`}
+              />
               {canDelete && (
                 <Button size="sm" variant="ghost" icon="trash" onClick={() => setToDelete(service)} aria-label="Apagar serviço" />
               )}

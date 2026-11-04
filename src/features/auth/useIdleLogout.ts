@@ -61,8 +61,12 @@ export function useIdleLogout(limitMs = IDLE_LIMIT_MS): void {
       void signOut()
     }
 
+    // A última atividade guardada só conta se for desta sessão.
+    // Se a pessoa acabou de entrar, uma atividade antiga é da sessão anterior e é ignorada.
     const stored = readLastActivity()
-    if (stored && Date.now() - stored > limitMs) {
+    const signedInAt = Date.parse(user.last_sign_in_at ?? '')
+    const isFromThisSession = stored !== null && !(signedInAt > stored)
+    if (stored && isFromThisSession && Date.now() - stored > limitMs) {
       // A app ficou aberta (ou a sessão guardada) sem uso durante demasiado tempo
       logout()
       return

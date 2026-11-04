@@ -31,7 +31,7 @@ export function NovaPasswordPage() {
         </p>
         <Link
           to="/recuperar-password"
-          className="mt-6 inline-flex h-10 w-full items-center justify-center rounded-lg bg-brand-600 px-4 text-sm font-medium text-white hover:bg-brand-700"
+          className="mt-6 inline-flex h-10 w-full items-center justify-center rounded-lg bg-brand-600 px-4 text-sm font-medium text-ink hover:bg-brand-500"
         >
           Pedir novo link
         </Link>

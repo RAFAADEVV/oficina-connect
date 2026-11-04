@@ -4,6 +4,7 @@ import { AuditLog } from '../../features/audit/AuditLog'
 import { SecuritySettings } from '../../features/auth/SecuritySettings'
 import { getOrganizationDetails, updateOrganization } from '../../features/organization/organizationApi'
 import { OrganizationForm } from '../../features/organization/OrganizationForm'
+import { TeamSettings } from '../../features/team/TeamSettings'
 import { useOrganization } from '../../features/organization/useOrganization'
 import { cn } from '../../lib/cn'
 import { useAsyncData } from '../../lib/useAsyncData'
@@ -38,6 +39,12 @@ export function DefinicoesPage() {
         </Card>
 
         <div className="flex flex-col gap-6">
+        {organization && (
+          <Card title="Equipa">
+            <TeamSettings organization={organization} />
+          </Card>
+        )}
+
         <Card title="Segurança da sua conta">
           <SecuritySettings />
         </Card>

@@ -6,7 +6,7 @@ type AlertVariant = 'error' | 'success' | 'info'
 const variantClasses: Record<AlertVariant, string> = {
   error: 'border-red-200 bg-red-50 text-red-800',
   success: 'border-emerald-200 bg-emerald-50 text-emerald-800',
-  info: 'border-brand-200 bg-brand-50 text-brand-900',
+  info: 'border-slate-200 bg-slate-100 text-slate-800',
 }
 
 interface AlertProps {

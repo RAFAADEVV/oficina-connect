@@ -3,6 +3,8 @@ import { Link, useNavigate, useParams } from 'react-router'
 import { Alert, Button, Card, ConfirmDialog, Icon, PageHeader, Spinner } from '../../components/ui'
 import { getErrorMessage } from '../../features/auth/authErrors'
 import { deleteCustomer, getCustomer } from '../../features/customers/customersApi'
+import { buildCustomerExport, downloadJson } from '../../features/customers/exportCustomer'
+import { exportFileName } from '../../features/customers/exportFileName'
 import { useOrganization } from '../../features/organization/useOrganization'
 import { VehicleServices } from '../../features/services/VehicleServices'
 import { VehicleForm } from '../../features/vehicles/VehicleForm'
@@ -44,6 +46,7 @@ export function ClienteDetalhePage() {
   // Veículos com o histórico de serviços aberto (com um só veículo, abre logo)
   const [toggledVehicles, setToggledVehicles] = useState<string[]>([])
   const [actionError, setActionError] = useState<string | null>(null)
+  const [isExporting, setIsExporting] = useState(false)
 
   if (customerQuery.error) {
     return (
@@ -86,6 +89,20 @@ export function ClienteDetalhePage() {
     }
   }
 
+  // RGPD: o cliente pode pedir uma cópia de todos os seus dados
+  async function exportData() {
+    setIsExporting(true)
+    setActionError(null)
+    try {
+      const data = await buildCustomerExport(customer!.id, organization!.name)
+      downloadJson(data, exportFileName(customer!.full_name))
+    } catch (err) {
+      setActionError(getErrorMessage(err))
+    } finally {
+      setIsExporting(false)
+    }
+  }
+
   const vehicles = vehiclesQuery.data ?? []
   const openByDefault = vehicles.length === 1
   const isServicesOpen = (vehicleId: string) => toggledVehicles.includes(vehicleId) !== openByDefault
@@ -118,6 +135,15 @@ export function ClienteDetalhePage() {
             )}
             <Button variant="secondary" icon="pencil" onClick={() => navigate(`/clientes/${customer.id}/editar`)}>
               Editar
+            </Button>
+            <Button
+              variant="ghost"
+              icon="download"
+              isLoading={isExporting}
+              onClick={() => void exportData()}
+              title="Descarregar todos os dados deste cliente (RGPD)"
+            >
+              Exportar dados
             </Button>
             {isOwner && (
               <Button variant="ghost" icon="trash" onClick={() => setToDelete({ type: 'customer' })} aria-label="Apagar cliente">
