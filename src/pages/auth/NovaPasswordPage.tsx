@@ -3,20 +3,26 @@ import { Link, useNavigate } from 'react-router'
 import { AuthLayout } from '../../components/layout/AuthLayout'
 import { Alert, Button, FullPageLoader, TextField } from '../../components/ui'
 import { getErrorMessage } from '../../features/auth/authErrors'
+import { getVerifiedTotp, isValidCode, verifyTotp } from '../../features/auth/mfa'
 import { useAuth } from '../../features/auth/useAuth'
 import { MIN_PASSWORD_LENGTH, validatePassword } from '../../features/auth/validation'
 import { supabase } from '../../lib/supabase'
 import { usePageTitle } from '../../lib/usePageTitle'
 
-/** Página aberta a partir do link de recuperação enviado por email. */
+/**
+ * Página aberta a partir do link de recuperação enviado por email.
+ * Com a autenticação em dois passos ativa, pede também o código da app:
+ * o link prova que a pessoa tem o email, o código prova o segundo passo.
+ */
 export function NovaPasswordPage() {
   usePageTitle('Nova password')
   const navigate = useNavigate()
-  const { user, isLoading } = useAuth()
+  const { user, isLoading, needsMfa, refreshMfa } = useAuth()
 
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
-  const [fieldErrors, setFieldErrors] = useState<{ password?: string; confirmPassword?: string }>({})
+  const [code, setCode] = useState('')
+  const [fieldErrors, setFieldErrors] = useState<{ code?: string; password?: string; confirmPassword?: string }>({})
   const [formError, setFormError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -43,28 +49,51 @@ export function NovaPasswordPage() {
     event.preventDefault()
     setFormError(null)
 
+    const cleanCode = code.replace(/\s/g, '')
     const errors = {
+      code: needsMfa && !isValidCode(cleanCode) ? 'Introduza os 6 dígitos da sua app de autenticação.' : undefined,
       password: validatePassword(password),
       confirmPassword: password === confirmPassword ? undefined : 'As passwords não coincidem.',
     }
     setFieldErrors(errors)
-    if (errors.password || errors.confirmPassword) return
+    if (errors.code || errors.password || errors.confirmPassword) return
 
     setIsSubmitting(true)
-    const { error } = await supabase.auth.updateUser({ password })
-    setIsSubmitting(false)
-
-    if (error) {
-      setFormError(getErrorMessage(error))
-      return
+    try {
+      // 1. Segundo passo (só quem o tem ativo)
+      if (needsMfa) {
+        const factor = await getVerifiedTotp()
+        if (factor) await verifyTotp(factor.id, cleanCode)
+        await refreshMfa()
+      }
+      // 2. Nova password
+      const { error } = await supabase.auth.updateUser({ password })
+      if (error) throw error
+      navigate('/', { replace: true })
+    } catch (err) {
+      setFormError(getErrorMessage(err))
+      setCode('')
+      setIsSubmitting(false)
     }
-    navigate('/', { replace: true })
   }
 
   return (
     <AuthLayout title="Definir nova password" description="Escolha uma nova password para a sua conta.">
       <form onSubmit={handleSubmit} noValidate className="space-y-4">
         {formError && <Alert variant="error">{formError}</Alert>}
+        {needsMfa && (
+          <TextField
+            label="Código da app de autenticação"
+            hint="A sua conta tem verificação em dois passos: abra a app e introduza o código de 6 dígitos."
+            inputMode="numeric"
+            autoComplete="one-time-code"
+            maxLength={7}
+            value={code}
+            onChange={(e) => setCode(e.target.value)}
+            error={fieldErrors.code}
+            autoFocus
+          />
+        )}
         <TextField
           label="Nova password"
           type="password"
