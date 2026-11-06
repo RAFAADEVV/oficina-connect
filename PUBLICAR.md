@@ -98,8 +98,7 @@ Quando houver uma migração nova (`0009`, …), corre-a **primeiro** no Supabas
 ## 6. Antes de teres clientes reais
 
 - **Emails:** o envio de emails incluído no Supabase é só para testes (poucos emails por hora).
-  Configura um serviço de email próprio em **Authentication → Emails → SMTP Settings**
-  (por exemplo Brevo ou Resend, ambos com plano gratuito) e personaliza os textos dos emails em português.
+  Segue o [EMAILS.md](EMAILS.md): emails enviados de `suporte@revyauto.pt`, em português e com a marca.
 - **Domínio próprio** (ex.: `app.revyauto.pt`): **Workers & Pages → revyauto → Custom domains**.
   Depois atualiza a **Site URL** e as **Redirect URLs** do Supabase (passo 3).
 - **CAPTCHA:** ver [SEGURANCA.md](SEGURANCA.md), secção 4.

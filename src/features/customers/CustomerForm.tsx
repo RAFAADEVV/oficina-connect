@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { Alert, Button, TextAreaField, TextField } from '../../components/ui'
-import { emptyToNull, formatPhone, isValidNif, normalizePhone } from '../../lib/format'
+import { emptyToNull, formatPhone, nifError, normalizePhone } from '../../lib/format'
 import { getErrorMessage } from '../auth/authErrors'
 import { validateEmail } from '../auth/validation'
 import type { Customer, CustomerInput } from './customersApi'
@@ -36,7 +36,7 @@ export function CustomerForm({ initial, submitLabel, onSubmit, onCancel }: Custo
       full_name: fullName.trim() ? undefined : 'Indique o nome do cliente.',
       phone: normalizedPhone ? undefined : 'Indique um telefone válido (ex.: 912 345 678).',
       email: email.trim() ? validateEmail(email) : undefined,
-      nif: nif.trim() && !isValidNif(nif) ? 'O NIF não é válido.' : undefined,
+      nif: nifError(nif),
     }
     setErrors(next)
     if (Object.values(next).some(Boolean) || !normalizedPhone) return

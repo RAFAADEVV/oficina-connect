@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { Alert, Button, TextField } from '../../components/ui'
-import { emptyToNull, formatPhone, isValidNif, normalizePhone } from '../../lib/format'
+import { emptyToNull, formatPhone, nifError, normalizePhone } from '../../lib/format'
 import { getErrorMessage } from '../auth/authErrors'
 import { validateEmail } from '../auth/validation'
 import type { OrganizationDetails, OrganizationUpdate } from './organizationApi'
@@ -37,7 +37,7 @@ export function OrganizationForm({ initial, canEdit, onSubmit }: OrganizationFor
       name: name.trim().length < 2 ? 'Indique o nome da oficina (pelo menos 2 caracteres).' : undefined,
       phone: phone.trim() && !normalizedPhone ? 'Indique um telefone válido.' : undefined,
       email: email.trim() ? validateEmail(email) : undefined,
-      nif: nif.trim() && !isValidNif(nif) ? 'O NIF não é válido.' : undefined,
+      nif: nifError(nif),
       interval: !Number.isInteger(months) || months < 1 || months > 60 ? 'Indique um número de meses entre 1 e 60.' : undefined,
     }
     setErrors(next)

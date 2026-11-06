@@ -69,6 +69,15 @@ export function isValidNif(input: string): boolean {
   return check === Number(nif[8])
 }
 
+/** Mensagem de erro do NIF, ou undefined se estiver vazio ou válido. */
+export function nifError(input: string): string | undefined {
+  const nif = input.replace(/\s/g, '')
+  if (!nif) return undefined
+  if (!/^[0-9]{9}$/.test(nif)) return 'O NIF tem 9 algarismos (pode escrever com ou sem espaços).'
+  if (!isValidNif(nif)) return 'Este NIF não existe: confirme os algarismos (o último é de controlo).'
+  return undefined
+}
+
 // ---------------------------------------------------------------------------
 // Datas e números
 // ---------------------------------------------------------------------------
