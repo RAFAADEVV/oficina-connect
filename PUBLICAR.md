@@ -26,8 +26,8 @@ git push
 ## 1. Base de dados (Supabase)
 
 1. Em **supabase.com → o teu projeto → SQL Editor**, confirma que já correste **todas** as migrações, por ordem:
-   `0001` → `0002` → … → `0008` (pasta `supabase/migrations`). Cada uma só se corre **uma vez**.
-2. Corre os testes da pasta `supabase/tests` (`0001` a `0008`). Todos têm de mostrar ✅.
+   `0001` → `0002` → … → `0009` (pasta `supabase/migrations`). Cada uma só se corre **uma vez**.
+2. Corre os testes da pasta `supabase/tests` (`0001` a `0009`). Todos têm de mostrar ✅.
 3. **Advisors → Security Advisor**: corre e resolve os avisos.
 4. Revê a lista do [SEGURANCA.md](SEGURANCA.md), secção 2 (confirmação de email, tamanho mínimo da password, etc.).
 

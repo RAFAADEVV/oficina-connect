@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { NavLink, useLocation } from 'react-router'
 import { mainNavigation, secondaryNavigation, type NavItem } from '../../config/navigation'
+import { useIsPlatformAdmin } from '../../features/admin/adminApi'
 import { useAuth } from '../../features/auth/useAuth'
 import { roleLabel, useOrganization } from '../../features/organization/useOrganization'
 import { isContacted, listReminders, onRemindersChanged } from '../../features/reminders/remindersApi'
@@ -55,6 +56,7 @@ export function Sidebar({ onNavigate }: SidebarProps) {
   const { user, signOut } = useAuth()
   const { organization } = useOrganization()
   const pendingReminders = usePendingReminderCount(organization?.id ?? null)
+  const { isAdmin } = useIsPlatformAdmin()
   const displayName = (user?.user_metadata?.full_name as string | undefined) || user?.email
 
   return (
@@ -86,6 +88,9 @@ export function Sidebar({ onNavigate }: SidebarProps) {
         ))}
 
         <div className="mt-auto border-t border-slate-200 pt-3">
+          {isAdmin && (
+            <NavigationLink item={{ label: 'Administração', path: '/admin', icon: 'shield' }} onNavigate={onNavigate} />
+          )}
           {secondaryNavigation.map((item) => (
             <NavigationLink key={item.path} item={item} onNavigate={onNavigate} />
           ))}

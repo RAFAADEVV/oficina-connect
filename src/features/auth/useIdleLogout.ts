@@ -18,6 +18,15 @@ export function takeLogoutReason(): string | null {
   }
 }
 
+/** Há um motivo de saída por mostrar? (não o apaga) */
+export function hasLogoutReason(): boolean {
+  try {
+    return window.sessionStorage.getItem(REASON_KEY) !== null
+  } catch {
+    return false
+  }
+}
+
 function rememberReason(reason: string): void {
   try {
     window.sessionStorage.setItem(REASON_KEY, reason)

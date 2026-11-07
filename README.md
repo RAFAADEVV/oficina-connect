@@ -116,6 +116,8 @@ Ver **[SEGURANCA.md](SEGURANCA.md)**: o que está protegido e as definições a 
 | `VITE_SUPABASE_URL` | URL do projeto Supabase |
 | `VITE_SUPABASE_ANON_KEY` | Chave pública **anon / publishable** do Supabase |
 | `VITE_TURNSTILE_SITE_KEY` | Opcional: chave pública do Cloudflare Turnstile (anti-robô) |
+| `VITE_CONTACT_WHATSAPP` | Opcional: número de WhatsApp da página inicial, com indicativo (ex.: `351912345678`) |
+| `VITE_CONTACT_EMAIL` | Opcional: email de contacto da página inicial |
 
 Regras importantes:
 
@@ -128,7 +130,7 @@ Regras importantes:
 
 ## Base de dados
 
-As migrações estão em `supabase/migrations` (`0001` a `0008`) e correm-se **por ordem**, uma única vez, no **SQL Editor** do Supabase.
+As migrações estão em `supabase/migrations` (`0001` a `0009`) e correm-se **por ordem**, uma única vez, no **SQL Editor** do Supabase.
 Cada uma tem um teste em `supabase/tests`. Todos têm de mostrar ✅.
 
 ## Publicação

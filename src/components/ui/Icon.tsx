@@ -85,6 +85,7 @@ const paths = {
       <path d="M14 3v5h5M9 13h6M9 17h6" />
     </>
   ),
+  shield: <path d="M12 3 5 6v5c0 4.5 3 8.3 7 10 4-1.7 7-5.5 7-10V6l-7-3Zm-3 9 2 2 4-4" />,
   download: <path d="M12 4v11m0 0-4-4m4 4 4-4M5 19h14" />,
   printer: (
     <>

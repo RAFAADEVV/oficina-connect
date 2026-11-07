@@ -251,6 +251,7 @@ export type Database = {
           used_by: string | null
           used_at: string | null
           revoked_at: string | null
+          email: string | null
         }
         Insert: never
         Update: never
@@ -289,7 +290,7 @@ export type Database = {
         Returns: string
       }
       create_invite: {
-        Args: { p_organization_id: string }
+        Args: { p_organization_id: string; p_email: string }
         Returns: { code: string; expires_at: string }[]
       }
       revoke_invite: {
@@ -321,6 +322,33 @@ export type Database = {
       update_service_record: {
         Args: { p_service_id: string; p_service: Json; p_parts?: Json }
         Returns: undefined
+      }
+      am_i_platform_admin: {
+        Args: Record<string, never>
+        Returns: boolean
+      }
+      admin_list_allowlist: {
+        Args: Record<string, never>
+        Returns: { email: string; note: string | null; created_at: string; has_account: boolean }[]
+      }
+      admin_allow_email: {
+        Args: { p_email: string; p_note?: string | null }
+        Returns: undefined
+      }
+      admin_remove_email: {
+        Args: { p_email: string }
+        Returns: undefined
+      }
+      admin_list_organizations: {
+        Args: Record<string, never>
+        Returns: {
+          id: string
+          name: string
+          owner_email: string | null
+          members: number
+          customers: number
+          created_at: string
+        }[]
       }
       create_service_record: {
         Args: { p_vehicle_id: string; p_service: Json; p_parts?: Json }

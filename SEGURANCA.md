@@ -14,11 +14,12 @@ Este documento descreve como a plataforma está protegida e as definições que 
 - **Autenticação em dois passos (MFA):** quem a ativa só acede aos dados depois de introduzir o código. Regra *restritiva* em todas as tabelas (migração 0006).
 - **Limite de 5 oficinas por conta** (anti-abuso).
 - **Convites de equipa** (migração 0007): o código só é mostrado uma vez e a base de dados guarda apenas o resumo (SHA-256). Expira em 7 dias, só pode ser usado uma vez, e há um máximo de 10 tentativas por hora por conta, para não ser possível adivinhar códigos. Só o Dono convida e remove pessoas, e o Dono não pode ser removido.
+- **Registo fechado** (migração 0009): só cria conta quem estiver na lista de emails autorizados (gerida pelo administrador) ou tiver um convite de equipa para o seu email. A regra está num gatilho da base de dados, por isso não se contorna pela app nem pela API. A administração exige a autenticação em dois passos confirmada.
 - **Corrigir serviços** (migração 0008): qualquer pessoa da oficina pode corrigir um serviço. As peças retiradas ficam no registo de eliminações, com o nome de quem as retirou.
 - **Registo de auditoria:** cada cliente, veículo, serviço ou peça apagado fica registado (quem e quando). Só o Dono vê.
 - **Validação dos dados** na própria base de dados: telefone, email, NIF, matrícula, tamanhos máximos.
 - **Funções privilegiadas** com `search_path` fixo e sem acesso para visitantes sem sessão.
-- **Testes de segurança:** `supabase/tests/0001` a `0008`, 91 testes no total.
+- **Testes de segurança:** `supabase/tests/0001` a `0009`, 100 testes no total.
 
 ### Aplicação
 - **Content-Security-Policy** e outros cabeçalhos de segurança (`public/_headers`): só carrega código da própria app, só fala com o Supabase, não pode ser metida dentro de outro site.

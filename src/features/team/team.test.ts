@@ -17,9 +17,10 @@ describe('normalizeInviteCode', () => {
 
 describe('inviteMessage', () => {
   it('inclui o nome da oficina, o endereço e o código', () => {
-    const text = inviteMessage('Auto Silva', 'ABCD-EFGH-JKMN', 'https://app.revyauto.pt')
+    const text = inviteMessage('Auto Silva', 'ABCD-EFGH-JKMN', 'https://app.revyauto.pt', 'tiago@exemplo.pt')
     expect(text).toContain('Auto Silva')
     expect(text).toContain('https://app.revyauto.pt/criar-conta')
     expect(text).toContain('ABCD-EFGH-JKMN')
+    expect(text).toContain('tiago@exemplo.pt')
   })
 })

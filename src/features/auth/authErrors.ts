@@ -57,6 +57,10 @@ export function getErrorMessage(error: unknown): string {
   if (text.includes('invalid login credentials')) return messages.invalid_credentials
   if (text.includes('email not confirmed')) return messages.email_not_confirmed
   if (text.includes('already registered')) return messages.user_already_exists
+  // Registo fechado (migração 0009): o email não está autorizado
+  if (text.includes('database error saving new user') || text.includes('revyauto_signup_not_allowed')) {
+    return 'Este email ainda não tem acesso ao RevyAuto. Se a sua oficina já usa o RevyAuto, peça um convite ao Dono para este email.'
+  }
 
   // Erros de rede (sem internet, servidor indisponível)
   if (error instanceof TypeError || err.message?.toLowerCase().includes('fetch')) {

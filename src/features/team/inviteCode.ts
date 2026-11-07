@@ -6,10 +6,10 @@ export function normalizeInviteCode(input: string): string | null {
 }
 
 /** Texto para enviar ao funcionário (WhatsApp ou outro). */
-export function inviteMessage(organizationName: string, code: string, appUrl: string): string {
+export function inviteMessage(organizationName: string, code: string, appUrl: string, email: string): string {
   return [
     `Olá! Foi convidado para a equipa da ${organizationName} no RevyAuto.`,
-    `1. Crie conta em ${appUrl}/criar-conta`,
+    `1. Crie conta em ${appUrl}/criar-conta com o email ${email}`,
     `2. Escolha "Tenho um código de convite" e escreva: ${code}`,
     'O código é válido durante 7 dias e só pode ser usado uma vez.',
   ].join('\n')

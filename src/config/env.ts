@@ -46,3 +46,13 @@ export const turnstileSiteKey = readOptional(import.meta.env.VITE_TURNSTILE_SITE
 
 /** true quando a verificação anti-robô (Turnstile) está configurada */
 export const isCaptchaEnabled = Boolean(turnstileSiteKey)
+
+/**
+ * Contactos mostrados na página inicial (opcionais, públicos).
+ * WhatsApp: número com indicativo, só algarismos (ex.: 351912345678).
+ * Sem valor, o respetivo botão não aparece.
+ */
+const whatsappDigits = readOptional(import.meta.env.VITE_CONTACT_WHATSAPP)?.replace(/\D/g, '')
+export const contactWhatsapp = whatsappDigits && whatsappDigits.length >= 9 ? whatsappDigits : undefined
+const email = readOptional(import.meta.env.VITE_CONTACT_EMAIL)
+export const contactEmail = email && /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email) ? email : undefined

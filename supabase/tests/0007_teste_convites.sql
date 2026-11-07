@@ -41,7 +41,7 @@ begin
   perform set_config('request.jwt.claims', json_build_object('sub', owner_a, 'role', 'authenticated')::text, true);
   org_a := public.create_organization('Oficina Convites A');
   insert into public.customers (organization_id, full_name, phone) values (org_a, 'Cliente A', '+351910000101');
-  select c.code into v_code from public.create_invite(org_a) c;
+  select c.code into v_code from public.create_invite(org_a, 'func-' || emp || '@exemplo.invalid') c;
 
   perform set_config('request.jwt.claims', json_build_object('sub', owner_b, 'role', 'authenticated')::text, true);
   org_b := public.create_organization('Oficina Convites B');
@@ -53,7 +53,7 @@ begin
 
   -- 2. Outra oficina não consegue criar convites para a Oficina A
   begin
-    perform public.create_invite(org_a);
+    perform public.create_invite(org_a, 'x@exemplo.invalid');
     raise exception '❌ Teste 2 falhou: o Dono de outra oficina criou um convite para a Oficina A';
   exception when insufficient_privilege then null;
   end;
@@ -84,17 +84,17 @@ begin
   -- 7. Um Funcionário não cria convites
   perform set_config('request.jwt.claims', json_build_object('sub', emp, 'role', 'authenticated')::text, true);
   begin
-    perform public.create_invite(org_a);
+    perform public.create_invite(org_a, 'y@exemplo.invalid');
     raise exception '❌ Teste 7 falhou: um Funcionário criou um convite';
   exception when insufficient_privilege then null;
   end;
 
   -- 8. Convites cancelados e expirados não funcionam
   perform set_config('request.jwt.claims', json_build_object('sub', owner_a, 'role', 'authenticated')::text, true);
-  select c.code into v_code2 from public.create_invite(org_a) c;
+  select c.code into v_code2 from public.create_invite(org_a, 'adiv-' || guesser || '@exemplo.invalid') c;
   select id into v_inv from public.organization_invites where organization_id = org_a and used_at is null;
   perform public.revoke_invite(v_inv);
-  select c.code into v_code from public.create_invite(org_a) c;
+  select c.code into v_code from public.create_invite(org_a, 'adiv-' || guesser || '@exemplo.invalid') c;
   reset role;
   update public.organization_invites set expires_at = now() - interval '1 minute'
    where organization_id = org_a and used_at is null and revoked_at is null;

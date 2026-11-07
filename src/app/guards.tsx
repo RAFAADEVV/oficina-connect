@@ -2,6 +2,8 @@ import { Navigate, Outlet, useLocation } from 'react-router'
 import { Alert, Button, FullPageLoader } from '../components/ui'
 import { useAuth } from '../features/auth/useAuth'
 import { useOrganization } from '../features/organization/useOrganization'
+import { hasLogoutReason } from '../features/auth/useIdleLogout'
+import { LandingPage } from '../pages/inicio/LandingPage'
 
 /**
  * "Guardas" de rotas: decidem para onde o utilizador vai consoante o seu estado.
@@ -21,7 +23,12 @@ export function RequireAuth() {
   const location = useLocation()
 
   if (isLoading) return <FullPageLoader />
-  if (!user) return <Navigate to="/entrar" replace state={{ from: location.pathname }} />
+  if (!user) {
+    // Visitantes no endereço principal veem a página inicial; nas outras páginas, vão entrar.
+    // Depois de uma saída por inatividade, vão para "Entrar" para verem o aviso.
+    if (location.pathname === '/' && !hasLogoutReason()) return <LandingPage />
+    return <Navigate to="/entrar" replace state={{ from: location.pathname }} />
+  }
   if (needsMfa && location.pathname !== MFA_PATH) {
     return <Navigate to={MFA_PATH} replace state={{ from: location.pathname }} />
   }

@@ -1,9 +1,10 @@
 import { useState } from 'react'
-import { Alert, Button, ConfirmDialog, Spinner } from '../../components/ui'
+import { Alert, Button, ConfirmDialog, Spinner, TextField } from '../../components/ui'
 import { formatDate } from '../../lib/format'
 import { useAsyncData } from '../../lib/useAsyncData'
 import { getErrorMessage } from '../auth/authErrors'
 import { useAuth } from '../auth/useAuth'
+import { validateEmail } from '../auth/validation'
 import type { CurrentOrganization } from '../organization/OrganizationContext'
 import { useOrganization } from '../organization/useOrganization'
 import {
@@ -32,6 +33,8 @@ export function TeamSettings({ organization }: { organization: CurrentOrganizati
   )
 
   const [newInvite, setNewInvite] = useState<NewInvite | null>(null)
+  const [inviteEmail, setInviteEmail] = useState('')
+  const [inviteEmailError, setInviteEmailError] = useState<string | undefined>()
   const [copied, setCopied] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [isBusy, setIsBusy] = useState(false)
@@ -50,7 +53,7 @@ export function TeamSettings({ organization }: { organization: CurrentOrganizati
     }
   }
 
-  const message = newInvite ? inviteMessage(organization.name, newInvite.code, window.location.origin) : ''
+  const message = newInvite ? inviteMessage(organization.name, newInvite.code, window.location.origin, newInvite.email) : ''
 
   async function copyMessage() {
     try {
@@ -104,10 +107,12 @@ export function TeamSettings({ organization }: { organization: CurrentOrganizati
         <div className="space-y-3 border-t border-slate-100 pt-4">
           {newInvite ? (
             <div className="space-y-3 rounded-lg border border-brand-200 bg-brand-50/60 p-4">
-              <p className="text-slate-700">Código de convite (válido até {formatDate(newInvite.expiresAt)}):</p>
+              <p className="text-slate-700">
+                Código de convite para <strong>{newInvite.email}</strong> (válido até {formatDate(newInvite.expiresAt)}):
+              </p>
               <p className="font-mono text-2xl font-semibold tracking-widest text-slate-900 select-all">{newInvite.code}</p>
               <p className="text-xs text-slate-600">
-                Só é mostrado agora. Envie-o ao funcionário: ele cria conta e escreve o código.
+                Só é mostrado agora. Envie-o ao funcionário: ele cria conta com este email e escreve o código.
               </p>
               <div className="flex flex-wrap gap-2">
                 <Button size="sm" variant="secondary" icon={copied ? 'check' : 'file'} onClick={() => void copyMessage()}>
@@ -127,19 +132,35 @@ export function TeamSettings({ organization }: { organization: CurrentOrganizati
               </div>
             </div>
           ) : (
-            <Button
-              icon="plus"
-              isLoading={isBusy}
-              onClick={() =>
+            <form
+              noValidate
+              className="flex flex-col gap-3 sm:flex-row sm:items-start"
+              onSubmit={(event) => {
+                event.preventDefault()
+                const emailError = validateEmail(inviteEmail)
+                setInviteEmailError(emailError)
+                if (emailError) return
                 void run(async () => {
                   setCopied(false)
-                  setNewInvite(await createInvite(organization.id))
+                  setNewInvite(await createInvite(organization.id, inviteEmail))
+                  setInviteEmail('')
                   invites.reload()
                 })
-              }
+              }}
             >
-              Convidar funcionário
-            </Button>
+              <TextField
+                label="Email do funcionário"
+                type="email"
+                autoComplete="off"
+                value={inviteEmail}
+                onChange={(e) => setInviteEmail(e.target.value)}
+                error={inviteEmailError}
+                className="flex-1"
+              />
+              <Button type="submit" icon="plus" isLoading={isBusy} className="sm:mt-6">
+                Convidar funcionário
+              </Button>
+            </form>
           )}
 
           {invites.error && <Alert variant="error">{invites.error}</Alert>}
@@ -149,8 +170,9 @@ export function TeamSettings({ organization }: { organization: CurrentOrganizati
               <ul className="divide-y divide-slate-100">
                 {invites.data.map((invite) => (
                   <li key={invite.id} className="flex items-center justify-between gap-3 py-2">
-                    <span className="text-slate-600">
-                      Criado a {formatDate(invite.created_at)} · expira a {formatDate(invite.expires_at)}
+                    <span className="min-w-0 text-slate-600">
+                      {invite.email && <span className="block truncate font-medium text-slate-800">{invite.email}</span>}
+                      <span className="text-xs">Expira a {formatDate(invite.expires_at)}</span>
                     </span>
                     <Button
                       variant="ghost"

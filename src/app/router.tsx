@@ -12,6 +12,7 @@ import { ClientesPage } from '../pages/clientes/ClientesPage'
 import { ImportarPage } from '../pages/clientes/ImportarPage'
 import { DashboardPage } from '../pages/dashboard/DashboardPage'
 import { DefinicoesPage } from '../pages/definicoes/DefinicoesPage'
+import { AdminPage } from '../pages/admin/AdminPage'
 import { NaoEncontradaPage } from '../pages/nao-encontrada/NaoEncontradaPage'
 import { OportunidadesPage } from '../pages/oportunidades/OportunidadesPage'
 import { RelatorioServicoPage } from '../pages/relatorio/RelatorioServicoPage'
@@ -64,6 +65,7 @@ export const router = createBrowserRouter([
                   { path: 'veiculos', element: <VeiculosPage /> },
                   { path: 'oportunidades', element: <OportunidadesPage /> },
                   { path: 'definicoes', element: <DefinicoesPage /> },
+                  { path: 'admin', element: <AdminPage /> },
                   { path: '*', element: <NaoEncontradaPage /> },
                 ],
               },

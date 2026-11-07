@@ -5,11 +5,13 @@ export type TeamMember = Database['public']['Functions']['list_team']['Returns']
 
 export interface PendingInvite {
   id: string
+  email: string | null
   created_at: string
   expires_at: string
 }
 
 export interface NewInvite {
+  email: string
   code: string
   expiresAt: string
 }
@@ -25,7 +27,7 @@ export async function listTeam(organizationId: string): Promise<TeamMember[]> {
 export async function listPendingInvites(organizationId: string): Promise<PendingInvite[]> {
   const { data, error } = await supabase
     .from('organization_invites')
-    .select('id, created_at, expires_at')
+    .select('id, email, created_at, expires_at')
     .eq('organization_id', organizationId)
     .is('used_at', null)
     .is('revoked_at', null)
@@ -36,12 +38,12 @@ export async function listPendingInvites(organizationId: string): Promise<Pendin
 }
 
 /** Cria um código de convite. O código só é devolvido esta vez: a base de dados guarda apenas o resumo. */
-export async function createInvite(organizationId: string): Promise<NewInvite> {
-  const { data, error } = await supabase.rpc('create_invite', { p_organization_id: organizationId })
+export async function createInvite(organizationId: string, email: string): Promise<NewInvite> {
+  const { data, error } = await supabase.rpc('create_invite', { p_organization_id: organizationId, p_email: email.trim() })
   if (error) throw error
   const row = data[0]
   if (!row) throw new Error('Sem código')
-  return { code: row.code, expiresAt: row.expires_at }
+  return { email: email.trim().toLowerCase(), code: row.code, expiresAt: row.expires_at }
 }
 
 export async function revokeInvite(inviteId: string): Promise<void> {
